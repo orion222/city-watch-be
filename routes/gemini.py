@@ -23,6 +23,7 @@ class DescriptionRequest(BaseModel):
 @router.post("/submit-report-gemini")
 def submit_report_gemini(request: DescriptionRequest, session: Session = Depends(get_session)):
   try:
+    print(request.description)
     prompt = GEMINI_REPORT_CREATE_PROMPT.replace("{{description}}", request.description)
     response = client.models.generate_content(
         model="gemini-2.5-flash", 
@@ -34,12 +35,13 @@ def submit_report_gemini(request: DescriptionRequest, session: Session = Depends
           response_schema=GEMINI_RESPONSE_SCHEMA
         ),
       )
+    
     raw = response.text or ''
     res = json.loads(raw)
     report = res['report']
     error_msg = "We need more context, please give the following required fields: "
     errors = []
-    for field in ["category", "position", "title", "urgency", "address"]:
+    for field in ["category", "position", "title", "urgency", "address", "description"]:
       if field not in report or report[field] is None:
         errors.append(field)
     
@@ -64,7 +66,7 @@ def submit_report_gemini(request: DescriptionRequest, session: Session = Depends
     
     new_marker = Marker(
         position=report['position'],
-        description=request.description,
+        description=report['description'],
         title=report['title'],
         urgency=report['urgency'],
         category=report['category'],

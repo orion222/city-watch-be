@@ -9,7 +9,7 @@ class Address(SQLModel, table=True):
     street: str
     city: str
     state: str
-    postal_code: str
+    postal_code: str | None = Field(default=None)
     country: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
     # Back reference to markers

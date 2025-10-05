@@ -6,7 +6,7 @@ class AddressCreate(BaseModel):
     street: str
     city: str
     state: str
-    postal_code: str
+    postal_code: str = None
     country: str
 
 class AddressUpdate(BaseModel):
@@ -21,6 +21,6 @@ class Address(BaseModel):
     street: str
     city: str
     state: str
-    postal_code: str
+    postal_code: str = None
     country: str
     created_at: Optional[datetime] = None

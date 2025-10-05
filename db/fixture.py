@@ -3,21 +3,6 @@ from db.enums import MarkerCategory, MarkerUrgency, MarkerStatus
 
 sample_markers = [
     Marker(
-        position=[43.78472822909501, -79.1861080766575],
-        description="Orion, Jayden, Kobe are at UTSC!",
-        title="Hack the Valley Event",
-        category=MarkerCategory.CRIME,
-        urgency=MarkerUrgency.LOW,
-        status=MarkerStatus.PENDING,
-        address=Address(
-            street="123 Campus Rd",
-            city="Toronto",
-            state="ON",
-            postal_code="M1C 1A4",
-            country="Canada",
-        ),
-    ),
-    Marker(
         position=[43.653226, -79.3831843],
         description="Large pothole reported near intersection; causes lane shifting at rush hour.",
         title="Pothole at King & Bay",
@@ -2581,5 +2566,20 @@ sample_markers = [
             postal_code="M5T 1R2",
             country="Canada",
         ),
+    ),
+    Marker(
+      position=[43.78472822909501, -79.1861080766575],
+      description="Orion, Jayden, Kobe are at UTSC!",
+      title="Hack the Valley Event",
+      category=MarkerCategory.CRIME,
+      urgency=MarkerUrgency.LOW,
+      status=MarkerStatus.PENDING,
+      address=Address(
+          street="123 Campus Rd",
+          city="Toronto",
+          state="ON",
+          postal_code="M1C 1A4",
+          country="Canada",
+      ),
     ),
 ]

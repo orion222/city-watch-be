@@ -42,6 +42,10 @@ Create a concise and descriptive title for the situation. **It must be 5 words o
 * If a specific location is mentioned that can be resolved into an address, populate all sub-fields that can be identified (`street`, `city`, `state`, `postal_code`, `country`).
 * If the location is vague, not provided, or cannot be confidently determined, **DO NOT** try to guess any sub field. Partial addresses are okay.
 * **DO NOT** set any sub-field unless you are certain the information is available or can be determined in the user prompt.
+
+**6. `description` (STRING):**
+* This is the original user input provided to you. It should be included verbatim in the final object
+* However, if the original user input matches a form data structure (e.g., contains fields like "name:", "email:", "phone:", etc.), you should extract and return only the relevant incident description portion, omitting any personal or form-related information.
 ---
 
 **USER INPUT:**
@@ -76,6 +80,10 @@ GEMINI_RESPONSE_SCHEMA = {
             "description": "The urgency level of the report",
             "enum": [MarkerUrgency.LOW.value, MarkerUrgency.MEDIUM.value, MarkerUrgency.HIGH.value, MarkerUrgency.CRITICAL.value]
         },
+        "description": {
+            "type": "STRING",
+            "description": "The description of the report. This value may or may not be equal to the original description depending on if the original description contained form data",
+        },
         "address": {
           "type": "OBJECT",
           "properties": {
@@ -103,7 +111,7 @@ GEMINI_RESPONSE_SCHEMA = {
           "required": ["street", "city", "state", "postal_code", "country"],
         },
       },
-      "required": ["category", "position", "title", "urgency", "address"],
+      "required": ["category", "position", "title", "description", "urgency", "address"],
     }
   },
   "required": ["report"]

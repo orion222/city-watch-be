@@ -11,7 +11,7 @@ router = APIRouter()
 @router.get("/marker")
 def get_markers(session: Session = Depends(get_session)):
 
-    statement = select(Marker).options(selectinload(Marker.address))
+    statement = select(Marker).options(selectinload(Marker.address)).order_by(Marker.timestamp.desc())
     markers = session.exec(statement).all()
     # Load address relationships
     markers_data = []
@@ -71,7 +71,7 @@ def create_marker(marker: MarkerSchema, session: Session = Depends(get_session))
     session.add(new_marker)
     session.commit()
     session.refresh(new_marker)
-    return {"message": f"Marker created successfully", "marker": {new_marker}}
+    return {"message": f"Marker created successfully", "marker": new_marker}
 
 @router.put("/marker/{marker_id}")
 def update_marker(marker_id: int, marker: MarkerSchema, session: Session = Depends(get_session)):
