@@ -7,7 +7,7 @@ from db.fixture import sample_markers
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://my_dev_user:my_dev_password@localhost:5432/citywatch")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg://my_dev_user:my_dev_password@localhost:5432/citywatch")
 engine = create_engine(DATABASE_URL)
 
 def init_db() -> None:
