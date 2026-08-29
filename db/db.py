@@ -1,9 +1,14 @@
+import os
 from typing import Generator
 from sqlmodel import Session, SQLModel, create_engine, select
+from dotenv import load_dotenv
 from db.models import Marker, Address
 from db.fixture import sample_markers
-DATABASE_URL = "sqlite:///./app.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg://my_dev_user:my_dev_password@localhost:5432/citywatch")
+engine = create_engine(DATABASE_URL)
 
 def init_db() -> None:
     SQLModel.metadata.create_all(engine)
