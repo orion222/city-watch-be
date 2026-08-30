@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 from db.db import get_session
 from db.models import Marker, Address
 from schemas.marker import Marker as MarkerSchema
+from utils.rate_limit import limiter
 import datetime
 
 router = APIRouter()
@@ -16,7 +17,11 @@ def _serialize(marker: Marker) -> dict:
     return data
 
 @router.get("/marker")
-def get_markers(session: Session = Depends(get_session)):
+@limiter.limit("60/minute")
+def get_markers(
+    request: Request,
+    session: Session = Depends(get_session)
+):
 
     statement = select(Marker).options(selectinload(Marker.address)).order_by(Marker.timestamp.desc())
     markers = session.exec(statement).all()
@@ -25,7 +30,12 @@ def get_markers(session: Session = Depends(get_session)):
     return {"markers": markers_data}
 
 @router.get("/marker/{marker_id}")
-def get_marker(marker_id: int, session: Session = Depends(get_session)):
+@limiter.limit("60/minute")
+def get_marker(
+    request: Request,
+    marker_id: int, 
+    session: Session = Depends(get_session)
+):
     # Use selectinload to eagerly load the address relationship
     statement = select(Marker).options(selectinload(Marker.address)).where(Marker.id == marker_id)
     marker = session.exec(statement).first()
@@ -36,7 +46,12 @@ def get_marker(marker_id: int, session: Session = Depends(get_session)):
     return {"marker": _serialize(marker)}
 
 @router.post("/marker")
-def create_marker(marker: MarkerSchema, session: Session = Depends(get_session)):
+@limiter.limit("20/minute")
+def create_marker(
+    request: Request,
+    marker: MarkerSchema, 
+    session: Session = Depends(get_session)
+):
     # Create address first if provided
     address_id = None
     if marker.address:
@@ -71,7 +86,13 @@ def create_marker(marker: MarkerSchema, session: Session = Depends(get_session))
     return {"message": f"Marker created successfully", "marker": _serialize(new_marker)}
 
 @router.put("/marker/{marker_id}")
-def update_marker(marker_id: int, marker: MarkerSchema, session: Session = Depends(get_session)):
+@limiter.limit("20/minute")
+def update_marker(
+    request: Request,
+    marker_id: int, 
+    marker: MarkerSchema, 
+    session: Session = Depends(get_session)
+):
     existing_marker = session.get(Marker, marker_id)
     if not existing_marker:
         return {"message": f"Marker {marker_id} not found"}

@@ -1,19 +1,29 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlmodel import Session, select
 from db.db import get_session
 from db.models import Address
 from schemas.address import AddressCreate, AddressUpdate
+from utils.rate_limit import limiter
 
 router = APIRouter()
 
 @router.get("/address")
-def get_addresses(session: Session = Depends(get_session)):
+@limiter.limit("60/minute")
+def get_addresses(
+    request: Request,
+    session: Session = Depends(get_session)
+):
     """Get all addresses"""
     addresses = session.exec(select(Address)).all()
     return {"addresses": addresses}
 
 @router.get("/address/{address_id}")
-def get_address(address_id: int, session: Session = Depends(get_session)):
+@limiter.limit("60/minute")
+def get_address(
+    request: Request,
+    address_id: int,
+    session: Session = Depends(get_session)
+):
     """Get a specific address by ID"""
     address = session.get(Address, address_id)
     if not address:
@@ -21,7 +31,12 @@ def get_address(address_id: int, session: Session = Depends(get_session)):
     return {"address": address}
 
 @router.post("/address")
-def create_address(address: AddressCreate, session: Session = Depends(get_session)):
+@limiter.limit("20/minute")
+def create_address(
+    request: Request,
+    address: AddressCreate,
+    session: Session = Depends(get_session)
+):
     """Create a new address"""
     new_address = Address(
         street=address.street,
@@ -36,7 +51,13 @@ def create_address(address: AddressCreate, session: Session = Depends(get_sessio
     return {"message": "Address created successfully", "address": new_address}
 
 @router.put("/address/{address_id}")
-def update_address(address_id: int, address: AddressUpdate, session: Session = Depends(get_session)):
+@limiter.limit("20/minute")
+def update_address(
+    request: Request,
+    address_id: int, 
+    address: AddressUpdate, 
+    session: Session = Depends(get_session)
+):
     """Update an existing address"""
     existing_address = session.get(Address, address_id)
     if not existing_address:
@@ -54,7 +75,12 @@ def update_address(address_id: int, address: AddressUpdate, session: Session = D
     return {"message": f"Address {address_id} updated", "address": existing_address}
 
 @router.delete("/address/{address_id}")
-def delete_address(address_id: int, session: Session = Depends(get_session)):
+@limiter.limit("20/minute")
+def delete_address(
+    request: Request,
+    address_id: int, 
+    session: Session = Depends(get_session)
+):
     """Delete an address"""
     address = session.get(Address, address_id)
     if not address:
