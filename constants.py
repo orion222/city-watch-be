@@ -33,17 +33,11 @@ Determine the urgency based on the immediate risk to people and property:
 **3. `title` (STRING):**
 Create a concise and descriptive title for the situation. **It must be 5 words or less.** (e.g., "Suspicious Person on Main St," "Major Pothole on Highway," "Bike Theft in Progress").
 
-**4. `position` (ARRAY):**
-* If a recognizable address, intersection, or landmark is provided, determine its geographic coordinates and return them as an array of two numbers: `[latitude, longitude]`.
-* If the location is vague ("near the park," "downtown"), not provided, or not a real place, you **must** return `null`.
-* **DO NOT** set this value unless you are certain the information is available or can be determined in the user prompt.
+**4. `address` (STRING):**
+* Identify any location mentioned in the description and output it as a single readable address string.
+* If no location is found, output an empty string.
 
-**5. `address` (OBJECT):**
-* If a specific location is mentioned that can be resolved into an address, populate all sub-fields that can be identified (`street`, `city`, `state`, `postal_code`, `country`).
-* If the location is vague, not provided, or cannot be confidently determined, **DO NOT** try to guess any sub field. Partial addresses are okay.
-* **DO NOT** set any sub-field unless you are certain the information is available or can be determined in the user prompt.
-
-**6. `description` (STRING):**
+**5. `description` (STRING):**
 * This is the original user input provided to you. It should be included verbatim in the final object
 * However, if the original user input matches a form data structure (e.g., contains fields like "name:", "email:", "phone:", etc.), you should extract and return only the relevant incident description portion, omitting any personal or form-related information.
 ---
@@ -64,12 +58,9 @@ GEMINI_RESPONSE_SCHEMA = {
           "description": "The category that best fits the description provided.",
           "enum": [MarkerCategory.CRIME.value, MarkerCategory.ENVIRONMENT.value, MarkerCategory.INFRASTRUCTURE.value, MarkerCategory.SAFETY.value, MarkerCategory.OTHER.value],
         },
-        "position": {
-            "type": "ARRAY",
-            "description": "A coordinate pair as [latitude, longitude] or null if position cannot be determined. If given a recognizable place or address, search up the coordinates for that location. Latitude and longitude should be in decimal degrees format (negative / positive floats).",
-            "items": {
-              "type": "NUMBER"
-            },
+        "address": {
+            "type": "STRING",
+            "description": "A single readable address string extracted from the description, or an empty string if no location is found.",
         },
         "title": {
             "type": "STRING",
@@ -84,34 +75,8 @@ GEMINI_RESPONSE_SCHEMA = {
             "type": "STRING",
             "description": "The description of the report. This value may or may not be equal to the original description depending on if the original description contained form data",
         },
-        "address": {
-          "type": "OBJECT",
-          "properties": {
-              "street": {
-                "type": "STRING",
-                "description": "The street address that best fits the description provided, or empty string if address cannot be determined. If the address is not specific, provide the closest approximation (e.g., nearest street or intersection).",
-              },
-              "city": {
-                "type": "STRING",
-                "description": "The city that best fits the description provided, or empty string if address cannot be determined. If the address is not specific, provide the closest approximation.",
-              },
-              "state": {
-                "type": "STRING",
-                "description": "The state that best fits the description provided, or empty string if address cannot be determined. If the address is not specific, provide the closest approximation.",
-              },
-              "postal_code": {
-                "type": "STRING",
-                "description": "The postal code that best fits the description provided, or empty string if address cannot be determined. If the address is not specific, provide the closest approximation.",
-              },
-              "country": {
-                "type": "STRING",
-                "description": "The country that best fits the description provided, or empty string if address cannot be determined. If the address is not specific, provide the closest approximation.",
-              },
-          },
-          "required": ["street", "city", "state", "postal_code", "country"],
-        },
       },
-      "required": ["category", "position", "title", "description", "urgency", "address"],
+      "required": ["category", "address", "title", "description", "urgency"],
     }
   },
   "required": ["report"]

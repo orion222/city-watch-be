@@ -1,5 +1,6 @@
 import json
 import os
+import logging
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
@@ -9,7 +10,7 @@ from db.db import get_session
 from google import genai
 from google.genai import types
 from db.models import Marker, Address
-
+from utils.geocoding import geocode_address
 
 load_dotenv()
 router = APIRouter()
@@ -23,10 +24,9 @@ class DescriptionRequest(BaseModel):
 @router.post("/submit-report-gemini")
 def submit_report_gemini(request: DescriptionRequest, session: Session = Depends(get_session)):
   try:
-    print(request.description)
     prompt = GEMINI_REPORT_CREATE_PROMPT.replace("{{description}}", request.description)
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-3.5-flash-lite",
         contents=prompt,
         config=types.GenerateContentConfig(
           # -1 thinking budget means that the model will decide how much to think on its own
@@ -41,31 +41,34 @@ def submit_report_gemini(request: DescriptionRequest, session: Session = Depends
     report = res['report']
     error_msg = "We need more context, please give the following required fields additional to what you provided again: "
     errors = []
-    for field in ["category", "position", "title", "urgency", "address", "description"]:
-      if field not in report or report[field] is None or report[field] == "" or (field == "position" and report[field] == []):
+    for field in ["category", "address", "title", "urgency", "description"]:
+      if field not in report or report[field] is None or report[field] == "":
         errors.append(field)
-
-    address = report['address']
-    for addr_field in ["street", "city", "state", "postal_code", "country"]:
-      if addr_field not in address or address[addr_field] is None or address[addr_field] == "":
-        errors.append(f"address.{addr_field}")
 
     if errors:
       raise HTTPException(status_code=422, detail=error_msg + ", ".join(errors))
 
+    # Geocode the address using Geoapify
+    address = report["address"]
+    if not address:
+        raise HTTPException(status_code=400, detail="No address provided for geocoding.")
+
+    geo_result = geocode_address(address)
+    address_details = geo_result["address_details"]
+    position = geo_result["position"]
+    
     new_address = Address(
-        street=address['street'],
-        city=address['city'],
-        state=address['state'],
-        postal_code=address['postal_code'],
-        country=address['country']
+        street=address_details["street"],
+        city=address_details["city"],
+        state=address_details["state"],
+        postal_code=address_details["postal_code"],
+        country=address_details["country"]
     )
     session.add(new_address)
-    session.commit()
-    session.refresh(new_address)
+    session.flush()
 
     new_marker = Marker(
-        position=report['position'],
+        position=position,
         description=report['description'],
         title=report['title'],
         urgency=report['urgency'],
@@ -74,6 +77,7 @@ def submit_report_gemini(request: DescriptionRequest, session: Session = Depends
     )
     session.add(new_marker)
     session.commit()
+    session.refresh(new_address)
     session.refresh(new_marker)
 
     return {
@@ -86,7 +90,9 @@ def submit_report_gemini(request: DescriptionRequest, session: Session = Depends
   except HTTPException:
       raise
   except json.JSONDecodeError as e:
-      raise HTTPException(status_code=500, detail=f"Invalid JSON returned from AI model: {raw}") from e
+      logging.error(f"Invalid JSON returned from AI model: {raw}")
+      raise HTTPException(status_code=500, detail="Invalid JSON returned from AI model") from e
   except Exception as e:
-      raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}") from e
+      logging.error(f"Error processing request: {str(e)}")
+      raise HTTPException(status_code=500, detail="An internal server error occurred while processing the request.")
 
