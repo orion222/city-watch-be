@@ -2,12 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import marker, address, gemini
 
-from db.db import init_db
-
 app = FastAPI(title="HTV Project API")
-
-# Initialize database
-init_db()
 
 # Configure CORS
 app.add_middleware(
