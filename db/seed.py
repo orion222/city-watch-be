@@ -1,48 +1,42 @@
-from sqlmodel import Session, select
+import argparse
+
+from sqlmodel import Session, delete, select
 
 from db.db import engine
 from db.fixture import sample_markers
 from db.models import Address, Marker
 
 
-def seed() -> None:
-    # Create initial data if tables are empty
+def seed(force: bool = False) -> None:
     with Session(engine) as session:
-        # Check if markers already exist
-        existing_markers = session.exec(select(Marker)).first()
-        if not existing_markers:
-            print("Creating sample data from fixtures...")
+        if force:
+            session.exec(delete(Marker))
+            session.exec(delete(Address))
+            print("Cleared existing markers and addresses.")
+        elif session.exec(select(Marker)).first():
+            print("Markers already exist — nothing to do. Use --force to reload.")
+            return
 
-            # Extract and create addresses first, then markers
-            for fixture_marker in sample_markers:
-                # Create address from fixture
-                address_data = fixture_marker.address
-                new_address = Address(
-                    street=address_data.street,
-                    city=address_data.city,
-                    state=address_data.state,
-                    postal_code=address_data.postal_code,
-                    country=address_data.country
+        for fixture in sample_markers:
+            address = Address(**fixture.address.model_dump(exclude={"id", "created_at"}))
+            session.add(
+                Marker(
+                    latitude=fixture.latitude,
+                    longitude=fixture.longitude,
+                    title=fixture.title,
+                    description=fixture.description,
+                    category=fixture.category,
+                    urgency=fixture.urgency,
+                    status=fixture.status,
+                    address=address,
                 )
-                session.add(new_address)
-                session.commit()
-                session.refresh(new_address)
+            )
 
-                # Create marker without nested address
-                new_marker = Marker(
-                    position=fixture_marker.position,
-                    description=fixture_marker.description,
-                    title=fixture_marker.title,
-                    category=fixture_marker.category,
-                    urgency=fixture_marker.urgency,
-                    status=fixture_marker.status,
-                    address_id=new_address.id  # Link to created address
-                )
-                session.add(new_marker)
-
-            session.commit()
-            print("Database initialized with sample marker data from fixtures")
+        session.commit()
+        print(f"Seeded {len(sample_markers)} markers.")
 
 
 if __name__ == "__main__":
-    seed()
+    parser = argparse.ArgumentParser(description="Load fixture markers into the database.")
+    parser.add_argument("--force", action="store_true", help="delete existing rows first")
+    seed(force=parser.parse_args().force)
