@@ -68,7 +68,8 @@ def submit_report_gemini(request: DescriptionRequest, session: Session = Depends
     session.flush()
 
     new_marker = Marker(
-        position=position,
+        latitude=position[0],
+        longitude=position[1],
         description=report['description'],
         title=report['title'],
         urgency=report['urgency'],

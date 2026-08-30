@@ -8,19 +8,20 @@ import datetime
 
 router = APIRouter()
 
+def _serialize(marker: Marker) -> dict:
+    data = marker.model_dump(exclude={"latitude", "longitude"})
+    data["position"] = [marker.latitude, marker.longitude]
+    if marker.address:
+        data["address"] = marker.address.model_dump()
+    return data
+
 @router.get("/marker")
 def get_markers(session: Session = Depends(get_session)):
 
     statement = select(Marker).options(selectinload(Marker.address)).order_by(Marker.timestamp.desc())
     markers = session.exec(statement).all()
-    # Load address relationships
-    markers_data = []
-    for marker in markers:
-        marker_dict = marker.model_dump()
-        if marker.address:
-            marker_dict["address"] = marker.address.model_dump()
-        markers_data.append(marker_dict)
-    
+    markers_data = [_serialize(marker) for marker in markers]
+
     return {"markers": markers_data}
 
 @router.get("/marker/{marker_id}")
@@ -28,16 +29,11 @@ def get_marker(marker_id: int, session: Session = Depends(get_session)):
     # Use selectinload to eagerly load the address relationship
     statement = select(Marker).options(selectinload(Marker.address)).where(Marker.id == marker_id)
     marker = session.exec(statement).first()
-    
+
     if not marker:
         return {"message": f"Marker {marker_id} not found"}
-    
-    # Convert to dict format for proper serialization
-    marker_dict = marker.model_dump()
-    if marker.address:
-        marker_dict["address"] = marker.address.model_dump()
-    
-    return {"marker": marker_dict}
+
+    return {"marker": _serialize(marker)}
 
 @router.post("/marker")
 def create_marker(marker: MarkerSchema, session: Session = Depends(get_session)):
@@ -57,10 +53,11 @@ def create_marker(marker: MarkerSchema, session: Session = Depends(get_session))
         address_id = new_address.id
     elif marker.address_id:
         address_id = marker.address_id
-    
+
     # Create marker with address relationship
     new_marker = Marker(
-        position=marker.position,
+        latitude=marker.latitude,
+        longitude=marker.longitude,
         description=marker.description,
         title=marker.title,
         urgency=marker.urgency,
@@ -71,14 +68,14 @@ def create_marker(marker: MarkerSchema, session: Session = Depends(get_session))
     session.add(new_marker)
     session.commit()
     session.refresh(new_marker)
-    return {"message": f"Marker created successfully", "marker": new_marker}
+    return {"message": f"Marker created successfully", "marker": _serialize(new_marker)}
 
 @router.put("/marker/{marker_id}")
 def update_marker(marker_id: int, marker: MarkerSchema, session: Session = Depends(get_session)):
     existing_marker = session.get(Marker, marker_id)
     if not existing_marker:
         return {"message": f"Marker {marker_id} not found"}
-    
+
     # Handle address update/creation
     address_id = existing_marker.address_id
     if marker.address:
@@ -107,21 +104,24 @@ def update_marker(marker_id: int, marker: MarkerSchema, session: Session = Depen
             address_id = new_address.id
     elif marker.address_id:
         address_id = marker.address_id
-    
-    # Update marker fields (excluding address object)
-    marker_data = marker.model_dump(exclude={"address"})
+
+    # Update marker fields (excluding address object and wire-only position)
+    marker_data = marker.model_dump(exclude={"address", "position"})
     marker_data["address_id"] = address_id
-    
+
     for key, value in marker_data.items():
         if hasattr(existing_marker, key):
             setattr(existing_marker, key, value)
-    
+
+    existing_marker.latitude = marker.latitude
+    existing_marker.longitude = marker.longitude
+
     session.add(existing_marker)
     session.commit()
     session.refresh(existing_marker)
-    
+
     # Load the updated address for response
     if existing_marker.address_id:
         existing_marker.address = session.get(Address, existing_marker.address_id)
-    
-    return {"message": f"Marker {marker_id} updated", "marker": existing_marker}
+
+    return {"message": f"Marker {marker_id} updated", "marker": _serialize(existing_marker)}
