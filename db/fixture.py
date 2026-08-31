@@ -3,7 +3,8 @@ from db.enums import MarkerCategory, MarkerUrgency, MarkerStatus
 
 sample_markers = [
     Marker(
-        position=[43.653226, -79.3831843],
+        latitude=43.653226,
+        longitude=-79.3831843,
         description="Large pothole reported near intersection; causes lane shifting at rush hour.",
         title="Pothole at King & Bay",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -18,7 +19,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.70011, -79.4163],
+        latitude=43.70011,
+        longitude=-79.4163,
         description="Overflowing bins attracting raccoons; needs cleanup.",
         title="Overflowing Bins at Park",
         category=MarkerCategory.ENVIRONMENT,
@@ -33,7 +35,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.65107, -79.347015],
+        latitude=43.65107,
+        longitude=-79.347015,
         description="Frequent near-misses at poorly marked crosswalk.",
         title="Unsafe Crosswalk by Distillery",
         category=MarkerCategory.SAFETY,
@@ -48,7 +51,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.761539, -79.411079],
+        latitude=43.761539,
+        longitude=-79.411079,
         description="Graffiti on community center wall; request removal.",
         title="Graffiti at Community Center",
         category=MarkerCategory.OTHER,
@@ -63,7 +67,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.589045, -79.64412],
+        latitude=43.589045,
+        longitude=-79.64412,
         description="Streetlight flickers and goes dark intermittently.",
         title="Faulty Streetlight Mississauga",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -78,7 +83,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.25654, -79.8696],
+        latitude=43.25654,
+        longitude=-79.8696,
         description="Illegal dumping spotted behind plaza; several black bags.",
         title="Illegal Dumping in Alley",
         category=MarkerCategory.ENVIRONMENT,
@@ -93,7 +99,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[45.421532, -75.697189],
+        latitude=45.421532,
+        longitude=-75.697189,
         description="Bike lane blocked daily by delivery vans; needs enforcement.",
         title="Chronic Bike Lane Blocking",
         category=MarkerCategory.SAFETY,
@@ -108,7 +115,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.463],
+        latitude=43.653,
+        longitude=-79.463,
         description="Hydrant appears damaged; cap missing and slow leak observed.",
         title="Damaged Fire Hydrant",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -123,7 +131,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6425662, -79.3870568],
+        latitude=43.6425662,
+        longitude=-79.3870568,
         description="Pickpocket incident reported during evening crowd.",
         title="Pickpocketing Near CN Tower",
         category=MarkerCategory.CRIME,
@@ -138,7 +147,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.761, -79.319],
+        latitude=43.761,
+        longitude=-79.319,
         description="Playground equipment loose bolt; child safety risk.",
         title="Loose Bolt on Slide",
         category=MarkerCategory.SAFETY,
@@ -153,7 +163,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.582],
+        latitude=43.653,
+        longitude=-79.582,
         description="Storm drain clogged; pooling water after light rain.",
         title="Clogged Storm Drain",
         category=MarkerCategory.ENVIRONMENT,
@@ -168,7 +179,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.719, -79.466],
+        latitude=43.719,
+        longitude=-79.466,
         description="Speeding on residential street; request speed bumps.",
         title="Speeding Hotspot",
         category=MarkerCategory.SAFETY,
@@ -183,7 +195,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.379],
+        latitude=43.653,
+        longitude=-79.379,
         description="Sidewalk heaving causes tripping hazard near transit stop.",
         title="Heaved Sidewalk Slab",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -198,7 +211,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6629, -79.3957],
+        latitude=43.6629,
+        longitude=-79.3957,
         description="Loud parties past midnight on weekends.",
         title="Noise Complaints by Campus",
         category=MarkerCategory.OTHER,
@@ -213,7 +227,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.645, -79.380],
+        latitude=43.645,
+        longitude=-79.38,
         description="Suspicious activity near parking garage entrance reported twice.",
         title="Suspicious Loitering",
         category=MarkerCategory.CRIME,
@@ -228,7 +243,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.676, -79.293],
+        latitude=43.676,
+        longitude=-79.293,
         description="Beach litter after weekend; turtles sighted nearby.",
         title="Beach Litter Cleanup Needed",
         category=MarkerCategory.ENVIRONMENT,
@@ -243,7 +259,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.761, -79.23],
+        latitude=43.761,
+        longitude=-79.23,
         description="Crossing signal timing too short for seniors.",
         title="Short Walk Signal",
         category=MarkerCategory.SAFETY,
@@ -258,7 +275,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.736, -79.608],
+        latitude=43.736,
+        longitude=-79.608,
         description="Sinkhole forming near bus stop; cones placed.",
         title="Small Sinkhole Alert",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -273,7 +291,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.447, -80.488],
+        latitude=43.447,
+        longitude=-80.488,
         description="Bike theft reported; CCTV may have captured suspect.",
         title="Bike Theft at Plaza",
         category=MarkerCategory.CRIME,
@@ -288,7 +307,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.473, -80.542],
+        latitude=43.473,
+        longitude=-80.542,
         description="Creek water appears cloudy; possible upstream construction runoff.",
         title="Cloudy Creek Water",
         category=MarkerCategory.ENVIRONMENT,
@@ -303,7 +323,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.256, -79.871],
+        latitude=43.256,
+        longitude=-79.871,
         description="Crosswalk paint faded; drivers not yielding.",
         title="Faded Crosswalk Lines",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -318,7 +339,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.589, -79.760],
+        latitude=43.589,
+        longitude=-79.76,
         description="Stray dog seen roaming near school; appears friendly but lost.",
         title="Stray Dog Near School",
         category=MarkerCategory.SAFETY,
@@ -333,7 +355,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.544, -80.248],
+        latitude=43.544,
+        longitude=-80.248,
         description="Broken bench slat; splinters reported.",
         title="Broken Park Bench",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -348,7 +371,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.464, -80.520],
+        latitude=43.464,
+        longitude=-80.52,
         description="Overgrown vegetation obstructing path signs.",
         title="Overgrown Trail Signs",
         category=MarkerCategory.ENVIRONMENT,
@@ -363,7 +387,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.392],
+        latitude=43.653,
+        longitude=-79.392,
         description="Phone snatching reported; consider patrol.",
         title="Phone Snatch at Food Court",
         category=MarkerCategory.CRIME,
@@ -378,7 +403,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.645, -79.410],
+        latitude=43.645,
+        longitude=-79.41,
         description="Construction fencing leaning into sidewalk.",
         title="Leaning Construction Fence",
         category=MarkerCategory.SAFETY,
@@ -393,7 +419,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.700, -79.330],
+        latitude=43.7,
+        longitude=-79.33,
         description="Street flooding after 10-minute shower indicates drainage issue.",
         title="Flash Flood Spot",
         category=MarkerCategory.ENVIRONMENT,
@@ -408,7 +435,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.640, -79.380],
+        latitude=43.64,
+        longitude=-79.38,
         description="Manhole cover rattles loudly when cars pass.",
         title="Noisy Manhole Cover",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -423,7 +451,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.654, -79.456],
+        latitude=43.654,
+        longitude=-79.456,
         description="Fireworks after midnight violating bylaws.",
         title="Late-Night Fireworks",
         category=MarkerCategory.OTHER,
@@ -438,7 +467,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.718, -79.518],
+        latitude=43.718,
+        longitude=-79.518,
         description="Stop sign knocked down after minor collision.",
         title="Downed Stop Sign",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -453,7 +483,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.789, -79.415],
+        latitude=43.789,
+        longitude=-79.415,
         description="Car break-ins reported over two nights.",
         title="Car Break-in Cluster",
         category=MarkerCategory.CRIME,
@@ -468,7 +499,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.399],
+        latitude=43.653,
+        longitude=-79.399,
         description="Food truck grease runoff into gutter.",
         title="Grease Runoff Concern",
         category=MarkerCategory.ENVIRONMENT,
@@ -483,7 +515,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.776, -79.231],
+        latitude=43.776,
+        longitude=-79.231,
         description="Playground fence missing a section.",
         title="Missing Fence Panel",
         category=MarkerCategory.SAFETY,
@@ -498,7 +531,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.747, -79.589],
+        latitude=43.747,
+        longitude=-79.589,
         description="Traffic light stuck on flashing yellow intermittently.",
         title="Faulty Traffic Signal",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -513,7 +547,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.371],
+        latitude=43.653,
+        longitude=-79.371,
         description="Aggressive solicitation reported near subway entrance.",
         title="Aggressive Panhandling",
         category=MarkerCategory.CRIME,
@@ -528,7 +563,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.669, -79.393],
+        latitude=43.669,
+        longitude=-79.393,
         description="Native plants trampled by shortcut; request signage.",
         title="Trampled Garden Beds",
         category=MarkerCategory.ENVIRONMENT,
@@ -543,7 +579,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.704, -79.398],
+        latitude=43.704,
+        longitude=-79.398,
         description="Narrow bridge without guardrails; near-miss reported.",
         title="Bridge Without Guardrails",
         category=MarkerCategory.SAFETY,
@@ -558,7 +595,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.776, -79.335],
+        latitude=43.776,
+        longitude=-79.335,
         description="Sidewalk snow/ice not cleared after storm.",
         title="Icy Sidewalk Stretch",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -573,7 +611,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.650, -79.380],
+        latitude=43.65,
+        longitude=-79.38,
         description="Lost child reported briefly; reunited—log for pattern monitoring.",
         title="Brief Lost Child Report",
         category=MarkerCategory.SAFETY,
@@ -588,7 +627,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.431],
+        latitude=43.653,
+        longitude=-79.431,
         description="Illegal scooter racing around midnight.",
         title="Late Scooter Racing",
         category=MarkerCategory.OTHER,
@@ -603,7 +643,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.648, -79.380],
+        latitude=43.648,
+        longitude=-79.38,
         description="Loose overhead sign bracket on storefront awning.",
         title="Loose Awning Bracket",
         category=MarkerCategory.SAFETY,
@@ -618,7 +659,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.662, -79.379],
+        latitude=43.662,
+        longitude=-79.379,
         description="Tree roots lifting curb and cracking asphalt.",
         title="Tree Root Uplift",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -633,7 +675,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.705, -79.329],
+        latitude=43.705,
+        longitude=-79.329,
         description="Garbage scattered by wind after collection missed.",
         title="Missed Garbage Pickup",
         category=MarkerCategory.ENVIRONMENT,
@@ -648,7 +691,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.590, -79.644],
+        latitude=43.59,
+        longitude=-79.644,
         description="Repeated porch thefts; camera footage available.",
         title="Package Theft Pattern",
         category=MarkerCategory.CRIME,
@@ -663,7 +707,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.743, -79.258],
+        latitude=43.743,
+        longitude=-79.258,
         description="School crossing guard absent 3 days this week.",
         title="Crossing Guard Absence",
         category=MarkerCategory.SAFETY,
@@ -678,7 +723,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.693, -79.287],
+        latitude=43.693,
+        longitude=-79.287,
         description="Flooded underpass after rainfall; cars turning around.",
         title="Flooded Underpass",
         category=MarkerCategory.ENVIRONMENT,
@@ -693,7 +739,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.756, -79.518],
+        latitude=43.756,
+        longitude=-79.518,
         description="Uneven steps at library entrance.",
         title="Uneven Library Steps",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -708,7 +755,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.630, -79.722],
+        latitude=43.63,
+        longitude=-79.722,
         description="Nighttime drag racing; request speed cameras.",
         title="Drag Racing Reports",
         category=MarkerCategory.SAFETY,
@@ -723,7 +771,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.648, -79.3805],
+        latitude=43.648,
+        longitude=-79.3805,
         description="Rats seen near storm drain; bait requested.",
         title="Rodent Sightings",
         category=MarkerCategory.ENVIRONMENT,
@@ -738,7 +787,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.642, -79.374],
+        latitude=43.642,
+        longitude=-79.374,
         description="Pocket park lights out; very dark after 8pm.",
         title="Park Lights Out",
         category=MarkerCategory.SAFETY,
@@ -753,7 +803,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.670, -79.385],
+        latitude=43.67,
+        longitude=-79.385,
         description="Bus shelter glass shattered; shards remaining.",
         title="Shattered Bus Shelter",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -768,7 +819,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.644, -79.395],
+        latitude=43.644,
+        longitude=-79.395,
         description="Street tree newly planted; needs watering schedule.",
         title="New Tree Needs Water",
         category=MarkerCategory.ENVIRONMENT,
@@ -783,7 +835,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.676, -79.409],
+        latitude=43.676,
+        longitude=-79.409,
         description="Abandoned bicycle locked to post for months.",
         title="Abandoned Bicycle",
         category=MarkerCategory.OTHER,
@@ -798,7 +851,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.767, -79.413],
+        latitude=43.767,
+        longitude=-79.413,
         description="Alley lights flicker, potential wiring issue.",
         title="Flickering Alley Lights",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -813,7 +867,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.645, -79.380],
+        latitude=43.645,
+        longitude=-79.38,
         description="Repeated wallet thefts reported at market stalls.",
         title="Market Wallet Thefts",
         category=MarkerCategory.CRIME,
@@ -828,7 +883,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.649, -79.468],
+        latitude=43.649,
+        longitude=-79.468,
         description="Oil sheen visible on puddles near garage.",
         title="Oil Sheen on Pavement",
         category=MarkerCategory.ENVIRONMENT,
@@ -843,7 +899,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.662, -79.332],
+        latitude=43.662,
+        longitude=-79.332,
         description="Missing tactile paving at curb cut.",
         title="Missing Tactile Paving",
         category=MarkerCategory.SAFETY,
@@ -858,7 +915,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.690, -79.297],
+        latitude=43.69,
+        longitude=-79.297,
         description="Erosion along trail edge; posts leaning.",
         title="Trail Erosion",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -873,7 +931,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.778, -79.233],
+        latitude=43.778,
+        longitude=-79.233,
         description="Suspicious door-to-door activity reported.",
         title="Suspicious Door Knockers",
         category=MarkerCategory.CRIME,
@@ -888,7 +947,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.642, -79.575],
+        latitude=43.642,
+        longitude=-79.575,
         description="Backyard fire smoke complaints; bylaw notice requested.",
         title="Backyard Fire Smoke",
         category=MarkerCategory.ENVIRONMENT,
@@ -903,7 +963,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.755, -79.432],
+        latitude=43.755,
+        longitude=-79.432,
         description="Crosswalk button unresponsive intermittently.",
         title="Unresponsive Crosswalk Button",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -918,7 +979,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.654, -79.380],
+        latitude=43.654,
+        longitude=-79.38,
         description="Delivery trucks idling; air quality complaints.",
         title="Truck Idling Complaints",
         category=MarkerCategory.ENVIRONMENT,
@@ -933,7 +995,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.661, -79.476],
+        latitude=43.661,
+        longitude=-79.476,
         description="Children crossing mid-block; request signage.",
         title="Mid-block Crossing Risk",
         category=MarkerCategory.SAFETY,
@@ -948,7 +1011,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.395],
+        latitude=43.653,
+        longitude=-79.395,
         description="Cracked glass canopy panel (not fallen).",
         title="Cracked Canopy Glass",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -963,7 +1027,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.700, -79.416],
+        latitude=43.7,
+        longitude=-79.416,
         description="Needles found in shrub area; request safe disposal.",
         title="Discarded Needles",
         category=MarkerCategory.SAFETY,
@@ -978,7 +1043,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.384],
+        latitude=43.653,
+        longitude=-79.384,
         description="Unauthorized street vendors blocking pedestrian flow.",
         title="Unlicensed Street Vendors",
         category=MarkerCategory.OTHER,
@@ -993,7 +1059,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.700, -79.560],
+        latitude=43.7,
+        longitude=-79.56,
         description="Guardrail dented after fender-bender.",
         title="Dented Guardrail",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1008,7 +1075,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.669, -79.402],
+        latitude=43.669,
+        longitude=-79.402,
         description="Public fountain water appears green; filter issue suspected.",
         title="Greenish Fountain Water",
         category=MarkerCategory.ENVIRONMENT,
@@ -1023,7 +1091,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.776, -79.3355],
+        latitude=43.776,
+        longitude=-79.3355,
         description="Jaywalking near transit hub; need barrier or signage.",
         title="Jaywalking Near Hub",
         category=MarkerCategory.SAFETY,
@@ -1038,7 +1107,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.773, -79.498],
+        latitude=43.773,
+        longitude=-79.498,
         description="Faded lane markings causing confusion at merge.",
         title="Faded Merge Markings",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1053,7 +1123,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.657, -79.378],
+        latitude=43.657,
+        longitude=-79.378,
         description="Pocket pick incidents during events; increased patrol requested.",
         title="Event Pickpocketing Pattern",
         category=MarkerCategory.CRIME,
@@ -1068,7 +1139,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.711, -79.279],
+        latitude=43.711,
+        longitude=-79.279,
         description="Tree limb broken and hanging over sidewalk.",
         title="Hanging Tree Limb",
         category=MarkerCategory.SAFETY,
@@ -1083,7 +1155,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.662, -79.442],
+        latitude=43.662,
+        longitude=-79.442,
         description="Culvert partially blocked by debris.",
         title="Debris in Culvert",
         category=MarkerCategory.ENVIRONMENT,
@@ -1098,7 +1171,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.650, -79.377],
+        latitude=43.65,
+        longitude=-79.377,
         description="Metal grate missing two bolts; rattles.",
         title="Loose Metal Grate",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1113,7 +1187,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.381],
+        latitude=43.653,
+        longitude=-79.381,
         description="E-bikes speeding through pedestrian plaza.",
         title="E-bikes in Pedestrian Zone",
         category=MarkerCategory.SAFETY,
@@ -1128,7 +1203,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.648, -79.397],
+        latitude=43.648,
+        longitude=-79.397,
         description="Restaurant trash stored on sidewalk overnight.",
         title="Restaurant Trash on Sidewalk",
         category=MarkerCategory.ENVIRONMENT,
@@ -1143,7 +1219,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.676, -79.2935],
+        latitude=43.676,
+        longitude=-79.2935,
         description="Beach lifeguard chair damaged.",
         title="Damaged Lifeguard Chair",
         category=MarkerCategory.SAFETY,
@@ -1158,7 +1235,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.700, -79.3305],
+        latitude=43.7,
+        longitude=-79.3305,
         description="Graffiti tagged on sound barrier walls.",
         title="Sound Barrier Graffiti",
         category=MarkerCategory.OTHER,
@@ -1173,7 +1251,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.640, -79.389],
+        latitude=43.64,
+        longitude=-79.389,
         description="Uncovered utility trench; temporary fencing only.",
         title="Open Utility Trench",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1188,7 +1267,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.651, -79.380],
+        latitude=43.651,
+        longitude=-79.38,
         description="Reports of counterfeit bills at nearby shops.",
         title="Counterfeit Bills Reports",
         category=MarkerCategory.CRIME,
@@ -1203,7 +1283,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.651, -79.407],
+        latitude=43.651,
+        longitude=-79.407,
         description="Stormwater pond aerator not running.",
         title="Aerator Not Operating",
         category=MarkerCategory.ENVIRONMENT,
@@ -1218,7 +1299,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.671, -79.466],
+        latitude=43.671,
+        longitude=-79.466,
         description="Playground gate latch broken.",
         title="Broken Gate Latch",
         category=MarkerCategory.SAFETY,
@@ -1233,7 +1315,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.699, -79.292],
+        latitude=43.699,
+        longitude=-79.292,
         description="Sidewalk closure with no detour signage.",
         title="No Detour Signage",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1248,7 +1331,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.640, -79.3805],
+        latitude=43.64,
+        longitude=-79.3805,
         description="Pedestrians feeding gulls; mess accumulating.",
         title="Feeding Gulls Mess",
         category=MarkerCategory.ENVIRONMENT,
@@ -1263,7 +1347,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.655, -79.380],
+        latitude=43.655,
+        longitude=-79.38,
         description="Aggressive dog off-leash in on-leash area.",
         title="Aggressive Off-Leash Dog",
         category=MarkerCategory.SAFETY,
@@ -1278,7 +1363,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.675, -79.412],
+        latitude=43.675,
+        longitude=-79.412,
         description="Skate park lights out after 9pm curfew time.",
         title="Skate Park Lights Out",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1293,7 +1379,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.689, -79.460],
+        latitude=43.689,
+        longitude=-79.46,
         description="Repeated catalytic converter thefts overnight.",
         title="Catalytic Converter Thefts",
         category=MarkerCategory.CRIME,
@@ -1308,7 +1395,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.676, -79.367],
+        latitude=43.676,
+        longitude=-79.367,
         description="Sewage smell near storm drain; investigation requested.",
         title="Sewage Odor Complaint",
         category=MarkerCategory.ENVIRONMENT,
@@ -1323,7 +1411,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.704, -79.397],
+        latitude=43.704,
+        longitude=-79.397,
         description="Blind corner hedge overgrowth; trim requested.",
         title="Blind Corner Hedge",
         category=MarkerCategory.SAFETY,
@@ -1338,7 +1427,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.645, -79.379],
+        latitude=43.645,
+        longitude=-79.379,
         description="Loose handrail on stairs to lower concourse.",
         title="Loose Stair Handrail",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1353,7 +1443,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.668, -79.306],
+        latitude=43.668,
+        longitude=-79.306,
         description="Paint spilled on bike lane creating slick area.",
         title="Paint Spill in Bike Lane",
         category=MarkerCategory.ENVIRONMENT,
@@ -1368,7 +1459,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.713, -79.465],
+        latitude=43.713,
+        longitude=-79.465,
         description="School zone sign twisted 90 degrees.",
         title="Twisted School Zone Sign",
         category=MarkerCategory.SAFETY,
@@ -1383,7 +1475,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.606, -79.497],
+        latitude=43.606,
+        longitude=-79.497,
         description="Boardwalk plank replaced unevenly causing trip hazard.",
         title="Uneven Boardwalk Plank",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1398,7 +1491,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.771, -79.413],
+        latitude=43.771,
+        longitude=-79.413,
         description="Night market generators too close to residences.",
         title="Noisy Night Market",
         category=MarkerCategory.OTHER,
@@ -1413,7 +1507,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.654, -79.435],
+        latitude=43.654,
+        longitude=-79.435,
         description="Construction dust without water suppression.",
         title="Construction Dust Issue",
         category=MarkerCategory.ENVIRONMENT,
@@ -1428,7 +1523,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.667, -79.373],
+        latitude=43.667,
+        longitude=-79.373,
         description="Alley blocked by illegally parked vehicles.",
         title="Blocked Alley Access",
         category=MarkerCategory.OTHER,
@@ -1443,7 +1539,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.680, -79.300],
+        latitude=43.68,
+        longitude=-79.3,
         description="Open electrical box near bus stop.",
         title="Open Electrical Box",
         category=MarkerCategory.SAFETY,
@@ -1458,7 +1555,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.699, -79.429],
+        latitude=43.699,
+        longitude=-79.429,
         description="Collapsed catch basin grate leaving gap.",
         title="Collapsed Catch Basin",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1473,7 +1571,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.706, -79.399],
+        latitude=43.706,
+        longitude=-79.399,
         description="Skunk sightings near garbage storage.",
         title="Skunk Sightings",
         category=MarkerCategory.ENVIRONMENT,
@@ -1488,7 +1587,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.664, -79.382],
+        latitude=43.664,
+        longitude=-79.382,
         description="Pickpocket warning sign requested after incidents.",
         title="Request Warning Signage",
         category=MarkerCategory.CRIME,
@@ -1503,7 +1603,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.720, -79.344],
+        latitude=43.72,
+        longitude=-79.344,
         description="Playfield lights staying on past scheduled time.",
         title="Lights On After Hours",
         category=MarkerCategory.OTHER,
@@ -1518,7 +1619,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.675, -79.414],
+        latitude=43.675,
+        longitude=-79.414,
         description="Loose storm sewer cover clanking loudly.",
         title="Clanking Sewer Cover",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1533,7 +1635,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.772, -79.292],
+        latitude=43.772,
+        longitude=-79.292,
         description="Air quality complaints from auto shop spray.",
         title="Auto Shop Spray Paint Odor",
         category=MarkerCategory.ENVIRONMENT,
@@ -1548,7 +1651,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.648, -79.371],
+        latitude=43.648,
+        longitude=-79.371,
         description="Theft from unlocked cars; outreach for prevention needed.",
         title="Unlocked Car Thefts",
         category=MarkerCategory.CRIME,
@@ -1563,7 +1667,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.660, -79.346],
+        latitude=43.66,
+        longitude=-79.346,
         description="Bridge expansion joint exposed; cyclists at risk.",
         title="Exposed Expansion Joint",
         category=MarkerCategory.SAFETY,
@@ -1578,7 +1683,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.645, -79.3808],
+        latitude=43.645,
+        longitude=-79.3808,
         description="Sidewalk vendor grease spill—slippery area.",
         title="Grease Spill on Walk",
         category=MarkerCategory.ENVIRONMENT,
@@ -1593,7 +1699,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.665, -79.410],
+        latitude=43.665,
+        longitude=-79.41,
         description="Railing missing on footbridge.",
         title="Missing Footbridge Railing",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1608,7 +1715,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.652, -79.381],
+        latitude=43.652,
+        longitude=-79.381,
         description="Tourists repeatedly targeted by fake ticket sellers.",
         title="Fake Ticket Sellers",
         category=MarkerCategory.CRIME,
@@ -1623,7 +1731,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.710, -79.398],
+        latitude=43.71,
+        longitude=-79.398,
         description="Park irrigation head spraying sidewalk.",
         title="Irrigation Overspray",
         category=MarkerCategory.ENVIRONMENT,
@@ -1638,7 +1747,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.658, -79.380],
+        latitude=43.658,
+        longitude=-79.38,
         description="Escalator intermittently stops; crowding ensues.",
         title="Intermittent Escalator",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1653,7 +1763,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.640, -79.382],
+        latitude=43.64,
+        longitude=-79.382,
         description="Delivery bikes riding against traffic in lane.",
         title="Wrong-way Delivery Bikes",
         category=MarkerCategory.SAFETY,
@@ -1668,7 +1779,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.679, -79.431],
+        latitude=43.679,
+        longitude=-79.431,
         description="Dumpster enclosure gate broken; wind-blown trash.",
         title="Broken Dumpster Gate",
         category=MarkerCategory.ENVIRONMENT,
@@ -1683,7 +1795,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.706, -79.344],
+        latitude=43.706,
+        longitude=-79.344,
         description="Stop bar paint missing at intersection.",
         title="Missing Stop Bar Paint",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1698,7 +1811,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.647, -79.368],
+        latitude=43.647,
+        longitude=-79.368,
         description="Scam QR code stickers placed on meters.",
         title="Fake QR Code Stickers",
         category=MarkerCategory.CRIME,
@@ -1713,7 +1827,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.618, -79.506],
+        latitude=43.618,
+        longitude=-79.506,
         description="Shoreline litter after weekend picnic groups.",
         title="Shoreline Litter",
         category=MarkerCategory.ENVIRONMENT,
@@ -1728,7 +1843,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.669, -79.393],
+        latitude=43.669,
+        longitude=-79.393,
         description="Fence leaning into sidewalk due to soil washout.",
         title="Leaning Fence",
         category=MarkerCategory.SAFETY,
@@ -1743,7 +1859,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.643, -79.427],
+        latitude=43.643,
+        longitude=-79.427,
         description="Pedestrian signal head rotated away from crossing.",
         title="Rotated Signal Head",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1758,7 +1875,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.652, -79.384],
+        latitude=43.652,
+        longitude=-79.384,
         description="Reports of pocket knives brandished in argument; no injuries.",
         title="Altercation with Knife",
         category=MarkerCategory.CRIME,
@@ -1773,7 +1891,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.676, -79.357],
+        latitude=43.676,
+        longitude=-79.357,
         description="Tree well missing grate; ankle hazard.",
         title="Missing Tree Grate",
         category=MarkerCategory.SAFETY,
@@ -1788,7 +1907,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.679, -79.294],
+        latitude=43.679,
+        longitude=-79.294,
         description="Graffiti on bridge abutment.",
         title="Bridge Graffiti",
         category=MarkerCategory.OTHER,
@@ -1803,7 +1923,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.744, -79.587],
+        latitude=43.744,
+        longitude=-79.587,
         description="Hazardous materials stored outdoors without cover.",
         title="Uncovered Hazardous Materials",
         category=MarkerCategory.ENVIRONMENT,
@@ -1818,7 +1939,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.664, -79.383],
+        latitude=43.664,
+        longitude=-79.383,
         description="Reports of phone scammers posing as city officials.",
         title="Phone Scam Reports",
         category=MarkerCategory.CRIME,
@@ -1833,7 +1955,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.710, -79.562],
+        latitude=43.71,
+        longitude=-79.562,
         description="Playground surface depressions collecting water.",
         title="Play Surface Depressions",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1848,7 +1971,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.676, -79.319],
+        latitude=43.676,
+        longitude=-79.319,
         description="Recycling contamination—bags full of food waste.",
         title="Recycling Contamination",
         category=MarkerCategory.ENVIRONMENT,
@@ -1863,7 +1987,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.647, -79.402],
+        latitude=43.647,
+        longitude=-79.402,
         description="Scooter collision near streetcar stop; no injuries reported.",
         title="Minor Scooter Collision",
         category=MarkerCategory.SAFETY,
@@ -1878,7 +2003,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.772, -79.257],
+        latitude=43.772,
+        longitude=-79.257,
         description="Crosswalk lines newly installed; monitor compliance.",
         title="New Crosswalk Monitoring",
         category=MarkerCategory.OTHER,
@@ -1893,7 +2019,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.663, -79.425],
+        latitude=43.663,
+        longitude=-79.425,
         description="Coyote sighting near ravine; appears healthy.",
         title="Coyote Sighting",
         category=MarkerCategory.SAFETY,
@@ -1908,7 +2035,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.642, -79.389],
+        latitude=43.642,
+        longitude=-79.389,
         description="Elevator reliability issues reported by residents.",
         title="Elevator Reliability Issues",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1923,7 +2051,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.662, -79.377],
+        latitude=43.662,
+        longitude=-79.377,
         description="Street artist obstructing fire exit with setup.",
         title="Blocked Fire Exit",
         category=MarkerCategory.SAFETY,
@@ -1938,7 +2067,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.647, -79.370],
+        latitude=43.647,
+        longitude=-79.37,
         description="Stolen bike recovered by resident; awaiting pickup.",
         title="Recovered Stolen Bike",
         category=MarkerCategory.CRIME,
@@ -1953,7 +2083,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.676, -79.420],
+        latitude=43.676,
+        longitude=-79.42,
         description="Storm-damaged tree leaning toward road.",
         title="Storm-Leaning Tree",
         category=MarkerCategory.SAFETY,
@@ -1968,7 +2099,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.698, -79.394],
+        latitude=43.698,
+        longitude=-79.394,
         description="Sewer backflow noticed in basement units nearby.",
         title="Sewer Backflow Reports",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -1983,7 +2115,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.651, -79.378],
+        latitude=43.651,
+        longitude=-79.378,
         description="Skateboarders grinding new handrails; request signage.",
         title="Handrail Grinding",
         category=MarkerCategory.OTHER,
@@ -1998,7 +2131,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.704, -79.3995],
+        latitude=43.704,
+        longitude=-79.3995,
         description="Bus stop pad settling causing water pooling.",
         title="Settled Bus Stop Pad",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2013,7 +2147,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.760, -79.411],
+        latitude=43.76,
+        longitude=-79.411,
         description="Blocked sightline at intersection by parked van.",
         title="Blocked Sightline",
         category=MarkerCategory.SAFETY,
@@ -2028,7 +2163,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.673, -79.321],
+        latitude=43.673,
+        longitude=-79.321,
         description="Community garden vandalized; plants uprooted.",
         title="Community Garden Vandalism",
         category=MarkerCategory.CRIME,
@@ -2043,7 +2179,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.686, -79.393],
+        latitude=43.686,
+        longitude=-79.393,
         description="Hydro pole leaning slightly after vehicle strike.",
         title="Leaning Hydro Pole",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2058,7 +2195,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.640, -79.379],
+        latitude=43.64,
+        longitude=-79.379,
         description="Marina fuel sheen observed; notify harbor master.",
         title="Fuel Sheen at Marina",
         category=MarkerCategory.ENVIRONMENT,
@@ -2073,7 +2211,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.654, -79.383],
+        latitude=43.654,
+        longitude=-79.383,
         description="Unattended luggage reported in food court; cleared by security.",
         title="Unattended Luggage Report",
         category=MarkerCategory.SAFETY,
@@ -2088,7 +2227,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.668, -79.395],
+        latitude=43.668,
+        longitude=-79.395,
         description="Storm grate missing bolts—could dislodge.",
         title="Loose Storm Grate",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2103,7 +2243,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.653, -79.3715],
+        latitude=43.653,
+        longitude=-79.3715,
         description="Public washroom out of service; lineups large.",
         title="Washroom Out of Service",
         category=MarkerCategory.OTHER,
@@ -2118,7 +2259,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.7005, -79.4165],
+        latitude=43.7005,
+        longitude=-79.4165,
         description="Dead raccoon on roadway; removal requested.",
         title="Roadkill Removal",
         category=MarkerCategory.ENVIRONMENT,
@@ -2133,7 +2275,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6505, -79.382],
+        latitude=43.6505,
+        longitude=-79.382,
         description="Unauthorized drone flights near tall buildings reported.",
         title="Unauthorized Drone Flights",
         category=MarkerCategory.SAFETY,
@@ -2148,7 +2291,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6765, -79.2938],
+        latitude=43.6765,
+        longitude=-79.2938,
         description="Broken shower at beach change room.",
         title="Beach Facility Repair",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2163,7 +2307,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6715, -79.4662],
+        latitude=43.6715,
+        longitude=-79.4662,
         description="Curb ramp too steep for wheelchairs; complaint filed.",
         title="Steep Curb Ramp",
         category=MarkerCategory.SAFETY,
@@ -2178,7 +2323,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.659, -79.380],
+        latitude=43.659,
+        longitude=-79.38,
         description="Overflow event at combined sewer outfall suspected.",
         title="CSO Overflow Suspected",
         category=MarkerCategory.ENVIRONMENT,
@@ -2193,7 +2339,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.695, -79.284],
+        latitude=43.695,
+        longitude=-79.284,
         description="Street hockey creating noise complaints; outreach requested.",
         title="Street Hockey Complaints",
         category=MarkerCategory.OTHER,
@@ -2208,7 +2355,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.707, -79.398],
+        latitude=43.707,
+        longitude=-79.398,
         description="Parking meter not accepting credit cards.",
         title="Parking Meter Card Failure",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2223,7 +2371,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6625, -79.3795],
+        latitude=43.6625,
+        longitude=-79.3795,
         description="Trip hazard from protruding rebar on plaza edge.",
         title="Protruding Rebar",
         category=MarkerCategory.SAFETY,
@@ -2238,7 +2387,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6402, -79.3802],
+        latitude=43.6402,
+        longitude=-79.3802,
         description="Boat horns late at night exceeding noise limits.",
         title="Marina Noise After Hours",
         category=MarkerCategory.OTHER,
@@ -2253,7 +2403,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.7008, -79.3308],
+        latitude=43.7008,
+        longitude=-79.3308,
         description="Caged shopping carts abandoned on sidewalk.",
         title="Abandoned Shopping Carts",
         category=MarkerCategory.OTHER,
@@ -2268,7 +2419,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6865, -79.3933],
+        latitude=43.6865,
+        longitude=-79.3933,
         description="Exposed rebar on retaining wall.",
         title="Exposed Retaining Wall Rebar",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2283,7 +2435,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6761, -79.3579],
+        latitude=43.6761,
+        longitude=-79.3579,
         description="Milky discharge seen in creek; source unknown.",
         title="Milky Creek Discharge",
         category=MarkerCategory.ENVIRONMENT,
@@ -2298,7 +2451,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6595, -79.3807],
+        latitude=43.6595,
+        longitude=-79.3807,
         description="Skylight panel cracked in atrium.",
         title="Cracked Atrium Skylight",
         category=MarkerCategory.SAFETY,
@@ -2313,7 +2467,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6408, -79.3799],
+        latitude=43.6408,
+        longitude=-79.3799,
         description="Boardwalk rail missing a baluster.",
         title="Missing Baluster on Rail",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2328,7 +2483,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6712, -79.4668],
+        latitude=43.6712,
+        longitude=-79.4668,
         description="Dumpster overfilled; birds spreading trash.",
         title="Overfilled Dumpster",
         category=MarkerCategory.ENVIRONMENT,
@@ -2343,7 +2499,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6535, -79.385],
+        latitude=43.6535,
+        longitude=-79.385,
         description="Street performer amplifier too loud; crowd spilling into roadway.",
         title="Amplified Street Performance",
         category=MarkerCategory.OTHER,
@@ -2358,7 +2515,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.661, -79.378],
+        latitude=43.661,
+        longitude=-79.378,
         description="Loose paving stone at fountain edge.",
         title="Loose Paving Stone",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2373,7 +2531,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6768, -79.2932],
+        latitude=43.6768,
+        longitude=-79.2932,
         description="Beach access ramp handrail wobbly.",
         title="Wobbly Ramp Handrail",
         category=MarkerCategory.SAFETY,
@@ -2388,7 +2547,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.702, -79.420],
+        latitude=43.702,
+        longitude=-79.42,
         description="Storm siren test failed per residents; verify.",
         title="Storm Siren Test Failure",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2403,7 +2563,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.680, -79.428],
+        latitude=43.68,
+        longitude=-79.428,
         description="Traffic island sign sheared off.",
         title="Missing Traffic Island Sign",
         category=MarkerCategory.SAFETY,
@@ -2418,7 +2579,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.650, -79.360],
+        latitude=43.65,
+        longitude=-79.36,
         description="Reports of counterfeit parking passes on dashboards.",
         title="Counterfeit Parking Passes",
         category=MarkerCategory.CRIME,
@@ -2433,7 +2595,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.699, -79.3302],
+        latitude=43.699,
+        longitude=-79.3302,
         description="Bats roosting in gazebo; public concerned.",
         title="Bat Roost in Gazebo",
         category=MarkerCategory.ENVIRONMENT,
@@ -2448,7 +2611,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.7065, -79.3998],
+        latitude=43.7065,
+        longitude=-79.3998,
         description="Fallen banner tangled in power lines.",
         title="Banner in Power Lines",
         category=MarkerCategory.SAFETY,
@@ -2463,7 +2627,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6406, -79.3811],
+        latitude=43.6406,
+        longitude=-79.3811,
         description="Deck boards splintering near benches.",
         title="Splintering Deck Boards",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2478,7 +2643,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6718, -79.4665],
+        latitude=43.6718,
+        longitude=-79.4665,
         description="Raccoon-proof bins needed; lids missing.",
         title="Missing Bin Lids",
         category=MarkerCategory.ENVIRONMENT,
@@ -2493,7 +2659,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6532, -79.3832],
+        latitude=43.6532,
+        longitude=-79.3832,
         description="Emergency exit light not functioning.",
         title="Exit Light Not Working",
         category=MarkerCategory.SAFETY,
@@ -2508,7 +2675,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.7002, -79.4162],
+        latitude=43.7002,
+        longitude=-79.4162,
         description="Request for sharps container installation.",
         title="Request Sharps Container",
         category=MarkerCategory.OTHER,
@@ -2523,7 +2691,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6762, -79.2931],
+        latitude=43.6762,
+        longitude=-79.2931,
         description="Boardwalk edge rope frayed.",
         title="Frayed Boardwalk Rope",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2538,7 +2707,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6518, -79.3819],
+        latitude=43.6518,
+        longitude=-79.3819,
         description="Unauthorized buskers blocking accessibility ramp.",
         title="Buskers Block Access Ramp",
         category=MarkerCategory.SAFETY,
@@ -2553,7 +2723,8 @@ sample_markers = [
         ),
     ),
     Marker(
-        position=[43.6621, -79.3792],
+        latitude=43.6621,
+        longitude=-79.3792,
         description="Overflowing fountain basin due to clogged filter.",
         title="Clogged Fountain Filter",
         category=MarkerCategory.INFRASTRUCTURE,
@@ -2568,7 +2739,8 @@ sample_markers = [
         ),
     ),
     Marker(
-      position=[43.78472822909501, -79.1861080766575],
+      latitude=43.78472822909501,
+      longitude=-79.1861080766575,
       description="Orion, Jayden, Kobe are at UTSC!",
       title="Hack the Valley Event",
       category=MarkerCategory.CRIME,

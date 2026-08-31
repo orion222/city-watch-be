@@ -1,6 +1,7 @@
 import json
 import os
 import logging
+from functools import lru_cache
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
@@ -14,9 +15,13 @@ from utils.geocoding import geocode_address
 
 load_dotenv()
 router = APIRouter()
-client = genai.Client(
-   api_key=os.getenv('GEMINI_API_KEY'),
-)
+
+@lru_cache(maxsize=1)
+def get_client() -> genai.Client:
+    api_key = os.getenv('GEMINI_API_KEY')
+    if not api_key:
+        raise HTTPException(status_code=503, detail="GEMINI_API_KEY is not configured")
+    return genai.Client(api_key=api_key)
 
 class DescriptionRequest(BaseModel):
     description: str
@@ -25,7 +30,7 @@ class DescriptionRequest(BaseModel):
 def submit_report_gemini(request: DescriptionRequest, session: Session = Depends(get_session)):
   try:
     prompt = GEMINI_REPORT_CREATE_PROMPT.replace("{{description}}", request.description)
-    response = client.models.generate_content(
+    response = get_client().models.generate_content(
         model="gemini-3.5-flash-lite",
         contents=prompt,
         config=types.GenerateContentConfig(
@@ -68,7 +73,8 @@ def submit_report_gemini(request: DescriptionRequest, session: Session = Depends
     session.flush()
 
     new_marker = Marker(
-        position=position,
+        latitude=position[0],
+        longitude=position[1],
         description=report['description'],
         title=report['title'],
         urgency=report['urgency'],

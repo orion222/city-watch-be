@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session
+from sqlmodel import Session, select
 from db.db import get_session
 from db.models import Address
 from schemas.address import AddressCreate, AddressUpdate
@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get("/address")
 def get_addresses(session: Session = Depends(get_session)):
     """Get all addresses"""
-    addresses = session.query(Address).all()
+    addresses = session.exec(select(Address)).all()
     return {"addresses": addresses}
 
 @router.get("/address/{address_id}")

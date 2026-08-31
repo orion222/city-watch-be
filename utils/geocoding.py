@@ -22,14 +22,23 @@ def _fetch_geoapify_data(address: str) -> dict:
         logging.error(f"Error connecting to Geoapify: {str(e)}")
         raise HTTPException(status_code=502, detail="External geocoding service is currently unavailable.")
 
+def _valid_coords(lat, lon) -> bool:
+    """Geoapify has returned numbers we can store as a lat/lng pair."""
+    if not all(isinstance(c, (int, float)) and not isinstance(c, bool) for c in (lat, lon)):
+        return False
+    return -90 <= lat <= 90 and -180 <= lon <= 180
+
 def _extract_address_details(feature: dict) -> dict:
     """Parses the Geoapify feature object into our internal format."""
     lat = feature.get("lat")
     lon = feature.get("lon")
-    
+
     if lat is None or lon is None:
         raise HTTPException(status_code=400, detail="Could not determine precise coordinates for the provided address.")
-        
+
+    if not _valid_coords(lat, lon):
+        raise HTTPException(status_code=400, detail="Geocoder returned unusable coordinates.")
+
     return {
         "position": [lat, lon],
         "address_details": {
