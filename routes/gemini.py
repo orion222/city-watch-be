@@ -16,9 +16,7 @@ from db.models import Address, Marker
 from utils.geocoding import geocode_address
 from utils.rate_limit import limiter
 
-THINKING_BUDGET = (
-    1024  # Adjust this value based on your requirements, -1 for unlimited
-)
+THINKING_BUDGET = 1024  # Adjust this value based on your requirements, -1 for unlimited
 
 load_dotenv()
 router = APIRouter()
@@ -28,16 +26,12 @@ router = APIRouter()
 def get_client() -> genai.Client:
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        raise HTTPException(
-            status_code=503, detail="GEMINI_API_KEY is not configured"
-        )
+        raise HTTPException(status_code=503, detail="GEMINI_API_KEY is not configured")
     return genai.Client(api_key=api_key)
 
 
 class DescriptionRequest(BaseModel):
-    description: str = Field(
-        max_length=4000
-    )  # Character limit, around 800 words
+    description: str = Field(max_length=4000)  # Character limit, around 800 words
 
 
 @router.post("/submit-report-gemini")
@@ -48,16 +42,12 @@ def submit_report_gemini(
     session: Session = Depends(get_session),
 ):
     try:
-        prompt = GEMINI_REPORT_CREATE_PROMPT.replace(
-            "{{description}}", body.description
-        )
+        prompt = GEMINI_REPORT_CREATE_PROMPT.replace("{{description}}", body.description)
         response = get_client().models.generate_content(
             model="gemini-3.5-flash-lite",
             contents=prompt,
             config=types.GenerateContentConfig(
-                thinking_config=types.ThinkingConfig(
-                    thinking_budget=THINKING_BUDGET
-                ),
+                thinking_config=types.ThinkingConfig(thinking_budget=THINKING_BUDGET),
                 response_mime_type="application/json",
                 response_schema=GEMINI_RESPONSE_SCHEMA,
             ),
@@ -66,27 +56,21 @@ def submit_report_gemini(
         raw = response.text or ""
         res = json.loads(raw)
         report = res["report"]
-        error_msg = "We need more context, please give the following required fields additional to what you provided again: "
+        error_msg = (
+            "We need more context, please give the following required fields additional to what you provided again: "
+        )
         errors = []
         for field in ["category", "address", "title", "urgency", "description"]:
-            if (
-                field not in report
-                or report[field] is None
-                or report[field] == ""
-            ):
+            if field not in report or report[field] is None or report[field] == "":
                 errors.append(field)
 
         if errors:
-            raise HTTPException(
-                status_code=422, detail=error_msg + ", ".join(errors)
-            )
+            raise HTTPException(status_code=422, detail=error_msg + ", ".join(errors))
 
         # Geocode the address using Geoapify
         address = report["address"]
         if not address:
-            raise HTTPException(
-                status_code=400, detail="No address provided for geocoding."
-            )
+            raise HTTPException(status_code=400, detail="No address provided for geocoding.")
 
         geo_result = geocode_address(address)
         address_details = geo_result["address_details"]
@@ -127,9 +111,7 @@ def submit_report_gemini(
         raise
     except json.JSONDecodeError as e:
         logging.error(f"Invalid JSON returned from AI model: {raw}")
-        raise HTTPException(
-            status_code=500, detail="Invalid JSON returned from AI model"
-        ) from e
+        raise HTTPException(status_code=500, detail="Invalid JSON returned from AI model") from e
     except Exception as e:
         logging.error(f"Error processing request: {str(e)}")
         raise HTTPException(

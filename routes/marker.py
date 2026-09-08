@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
@@ -23,11 +22,7 @@ def _serialize(marker: Marker) -> dict:
 @limiter.limit("60/minute")
 def get_markers(request: Request, session: Session = Depends(get_session)):
 
-    statement = (
-        select(Marker)
-        .options(selectinload(Marker.address))
-        .order_by(Marker.timestamp.desc())
-    )
+    statement = select(Marker).options(selectinload(Marker.address)).order_by(Marker.timestamp.desc())
     markers = session.exec(statement).all()
     markers_data = [_serialize(marker) for marker in markers]
 
@@ -36,15 +31,9 @@ def get_markers(request: Request, session: Session = Depends(get_session)):
 
 @router.get("/marker/{marker_id}")
 @limiter.limit("60/minute")
-def get_marker(
-    request: Request, marker_id: int, session: Session = Depends(get_session)
-):
+def get_marker(request: Request, marker_id: int, session: Session = Depends(get_session)):
     # Use selectinload to eagerly load the address relationship
-    statement = (
-        select(Marker)
-        .options(selectinload(Marker.address))
-        .where(Marker.id == marker_id)
-    )
+    statement = select(Marker).options(selectinload(Marker.address)).where(Marker.id == marker_id)
     marker = session.exec(statement).first()
 
     if not marker:
@@ -155,9 +144,7 @@ def update_marker(
 
     # Load the updated address for response
     if existing_marker.address_id:
-        existing_marker.address = session.get(
-            Address, existing_marker.address_id
-        )
+        existing_marker.address = session.get(Address, existing_marker.address_id)
 
     return {
         "message": f"Marker {marker_id} updated",

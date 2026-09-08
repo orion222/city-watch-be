@@ -4,7 +4,7 @@ lint.select = ["E", "F", "I"]
 lint.ignore = []
 
 # Allow lines to be as long as 100 characters
-line-length = 80
+line-length = 120
 
 [tool.ruff.format]
 quote-style = "double"
