@@ -10,3 +10,4 @@ psycopg[binary]>=3.2
 alembic>=1.13
 slowapi==0.1.9
 redis==5.0.3
+ruff>=0.16.0

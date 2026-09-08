@@ -1,8 +1,10 @@
 from datetime import datetime
 from typing import List
+
 import sqlalchemy as sa
-from sqlmodel import Field, SQLModel, Relationship
-from db.enums import MarkerCategory, MarkerUrgency, MarkerStatus
+from sqlmodel import Field, Relationship, SQLModel
+
+from db.enums import MarkerCategory, MarkerStatus, MarkerUrgency
 
 
 def enum_column(enum_cls, **kw) -> sa.Column:
@@ -28,10 +30,13 @@ class Address(SQLModel, table=True):
     country: str
     created_at: datetime = Field(
         sa_column=sa.Column(
-            sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.func.now(),
         )
     )
     markers: List["Marker"] = Relationship(back_populates="address")
+
 
 class Marker(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -57,7 +62,9 @@ class Marker(SQLModel, table=True):
 
     timestamp: datetime = Field(
         sa_column=sa.Column(
-            sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.func.now(),
         )
     )
 

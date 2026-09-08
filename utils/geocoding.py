@@ -1,32 +1,45 @@
-import urllib.request
-import urllib.parse
 import json
-import os
 import logging
+import os
+import urllib.parse
+import urllib.request
+
 from fastapi import HTTPException
+
 
 def _fetch_geoapify_data(address: str) -> dict:
     """Handles the external API request to Geoapify."""
     api_key = os.getenv("GEOAPIFY_API_KEY")
     if not api_key:
-        raise HTTPException(status_code=500, detail="Geoapify API key is not set in environment variables.")
+        raise HTTPException(
+            status_code=500,
+            detail="Geoapify API key is not set in environment variables.",
+        )
 
     encoded_address = urllib.parse.quote(address)
     url = f"https://api.geoapify.com/v1/geocode/search?text={encoded_address}&apiKey={api_key}"
-    
-    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     try:
         with urllib.request.urlopen(req, timeout=10) as response:
             return json.loads(response.read().decode())
     except Exception as e:
         logging.error(f"Error connecting to Geoapify: {str(e)}")
-        raise HTTPException(status_code=502, detail="External geocoding service is currently unavailable.")
+        raise HTTPException(
+            status_code=502,
+            detail="External geocoding service is currently unavailable.",
+        )
+
 
 def _valid_coords(lat, lon) -> bool:
     """Geoapify has returned numbers we can store as a lat/lng pair."""
-    if not all(isinstance(c, (int, float)) and not isinstance(c, bool) for c in (lat, lon)):
+    if not all(
+        isinstance(c, (int, float)) and not isinstance(c, bool)
+        for c in (lat, lon)
+    ):
         return False
     return -90 <= lat <= 90 and -180 <= lon <= 180
+
 
 def _extract_address_details(feature: dict) -> dict:
     """Parses the Geoapify feature object into our internal format."""
@@ -34,10 +47,15 @@ def _extract_address_details(feature: dict) -> dict:
     lon = feature.get("lon")
 
     if lat is None or lon is None:
-        raise HTTPException(status_code=400, detail="Could not determine precise coordinates for the provided address.")
+        raise HTTPException(
+            status_code=400,
+            detail="Could not determine precise coordinates for the provided address.",
+        )
 
     if not _valid_coords(lat, lon):
-        raise HTTPException(status_code=400, detail="Geocoder returned unusable coordinates.")
+        raise HTTPException(
+            status_code=400, detail="Geocoder returned unusable coordinates."
+        )
 
     return {
         "position": [lat, lon],
@@ -46,9 +64,10 @@ def _extract_address_details(feature: dict) -> dict:
             "city": feature.get("city", ""),
             "state": feature.get("state", ""),
             "postal_code": feature.get("postcode", ""),
-            "country": feature.get("country", "")
-        }
+            "country": feature.get("country", ""),
+        },
     }
+
 
 def geocode_address(address: str) -> dict:
     """
@@ -62,7 +81,9 @@ def geocode_address(address: str) -> dict:
     geo_data = _fetch_geoapify_data(address)
 
     if not geo_data.get("features"):
-        raise HTTPException(status_code=400, detail="Could not geocode the provided address.")
-        
+        raise HTTPException(
+            status_code=400, detail="Could not geocode the provided address."
+        )
+
     feature = geo_data["features"][0]["properties"]
     return _extract_address_details(feature)

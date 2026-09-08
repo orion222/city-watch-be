@@ -1,7 +1,10 @@
 from typing import Annotated, Optional
+
 from pydantic import BaseModel, Field, field_validator
+
+from db.enums import MarkerCategory, MarkerStatus, MarkerUrgency
 from schemas.address import AddressCreate
-from db.enums import MarkerCategory, MarkerUrgency, MarkerStatus
+
 
 class Marker(BaseModel):
     position: Annotated[list[float], Field(min_length=2, max_length=2)]

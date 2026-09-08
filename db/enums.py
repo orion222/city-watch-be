@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class MarkerCategory(str, Enum):
     CRIME = "Crime"
     ENVIRONMENT = "Environment"
@@ -7,11 +8,13 @@ class MarkerCategory(str, Enum):
     SAFETY = "Safety"
     OTHER = "Other"
 
+
 class MarkerUrgency(str, Enum):
     LOW = "Low"
     MEDIUM = "Medium"
     HIGH = "High"
     CRITICAL = "Critical"
+
 
 class MarkerStatus(str, Enum):
     PENDING = "Pending"
