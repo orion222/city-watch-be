@@ -1,5 +1,5 @@
+from db.enums import MarkerCategory, MarkerStatus, MarkerUrgency
 from db.models import Address, Marker
-from db.enums import MarkerCategory, MarkerUrgency, MarkerStatus
 
 sample_markers = [
     Marker(
@@ -2739,19 +2739,19 @@ sample_markers = [
         ),
     ),
     Marker(
-      latitude=43.78472822909501,
-      longitude=-79.1861080766575,
-      description="Orion, Jayden, Kobe are at UTSC!",
-      title="Hack the Valley Event",
-      category=MarkerCategory.CRIME,
-      urgency=MarkerUrgency.LOW,
-      status=MarkerStatus.PENDING,
-      address=Address(
-          street="123 Campus Rd",
-          city="Toronto",
-          state="ON",
-          postal_code="M1C 1A4",
-          country="Canada",
-      ),
+        latitude=43.78472822909501,
+        longitude=-79.1861080766575,
+        description="Orion, Jayden, Kobe are at UTSC!",
+        title="Hack the Valley Event",
+        category=MarkerCategory.CRIME,
+        urgency=MarkerUrgency.LOW,
+        status=MarkerStatus.PENDING,
+        address=Address(
+            street="123 Campus Rd",
+            city="Toronto",
+            state="ON",
+            postal_code="M1C 1A4",
+            country="Canada",
+        ),
     ),
 ]

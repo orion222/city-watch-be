@@ -1,7 +1,6 @@
 from db.enums import MarkerCategory, MarkerUrgency
 
-GEMINI_REPORT_CREATE_PROMPT = (
-  """
+GEMINI_REPORT_CREATE_PROMPT = """
 You are a sophisticated AI agent designed to process real-time incident reports. Your primary function is to analyze a user's description of a situation, extract key information, and structure it into a precise JSON object that adheres strictly to the provided schema.
 **THIS MUST BE IN THE CONTEXT OF THE USER'S REPORT. DO NOT MAKE UP ANY INFORMATION.**
 
@@ -45,39 +44,55 @@ Create a concise and descriptive title for the situation. **It must be 5 words o
 **USER INPUT:**
 "{{description}}"
 """
-)
 
 GEMINI_RESPONSE_SCHEMA = {
-  "type": "OBJECT",
-  "properties": {
-    "report": {
-      "type": "OBJECT",
-      "properties": {
-        "category": {
-          "type": "STRING",
-          "description": "The category that best fits the description provided.",
-          "enum": [MarkerCategory.CRIME.value, MarkerCategory.ENVIRONMENT.value, MarkerCategory.INFRASTRUCTURE.value, MarkerCategory.SAFETY.value, MarkerCategory.OTHER.value],
-        },
-        "address": {
-            "type": "STRING",
-            "description": "A single readable address string extracted from the description, or an empty string if no location is found.",
-        },
-        "title": {
-            "type": "STRING",
-            "description": "The title that best fits the description provided. Max 5 words or less"
-        },
-        "urgency": {
-            "type": "STRING",
-            "description": "The urgency level of the report",
-            "enum": [MarkerUrgency.LOW.value, MarkerUrgency.MEDIUM.value, MarkerUrgency.HIGH.value, MarkerUrgency.CRITICAL.value]
-        },
-        "description": {
-            "type": "STRING",
-            "description": "The description of the report. This value may or may not be equal to the original description depending on if the original description contained form data",
-        },
-      },
-      "required": ["category", "address", "title", "description", "urgency"],
-    }
-  },
-  "required": ["report"]
+    "type": "OBJECT",
+    "properties": {
+        "report": {
+            "type": "OBJECT",
+            "properties": {
+                "category": {
+                    "type": "STRING",
+                    "description": "The category that best fits the description provided.",
+                    "enum": [
+                        MarkerCategory.CRIME.value,
+                        MarkerCategory.ENVIRONMENT.value,
+                        MarkerCategory.INFRASTRUCTURE.value,
+                        MarkerCategory.SAFETY.value,
+                        MarkerCategory.OTHER.value,
+                    ],
+                },
+                "address": {
+                    "type": "STRING",
+                    "description": "A single readable address string extracted from the description, or an empty string if no location is found.",
+                },
+                "title": {
+                    "type": "STRING",
+                    "description": "The title that best fits the description provided. Max 5 words or less",
+                },
+                "urgency": {
+                    "type": "STRING",
+                    "description": "The urgency level of the report",
+                    "enum": [
+                        MarkerUrgency.LOW.value,
+                        MarkerUrgency.MEDIUM.value,
+                        MarkerUrgency.HIGH.value,
+                        MarkerUrgency.CRITICAL.value,
+                    ],
+                },
+                "description": {
+                    "type": "STRING",
+                    "description": "The description of the report. This value may or may not be equal to the original description depending on if the original description contained form data",
+                },
+            },
+            "required": [
+                "category",
+                "address",
+                "title",
+                "description",
+                "urgency",
+            ],
+        }
+    },
+    "required": ["report"],
 }

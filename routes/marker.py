@@ -1,13 +1,15 @@
+
 from fastapi import APIRouter, Depends, Request
-from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
+from sqlmodel import Session, select
+
 from db.db import get_session
-from db.models import Marker, Address
+from db.models import Address, Marker
 from schemas.marker import Marker as MarkerSchema
 from utils.rate_limit import limiter
-import datetime
 
 router = APIRouter()
+
 
 def _serialize(marker: Marker) -> dict:
     data = marker.model_dump(exclude={"latitude", "longitude"})
@@ -16,28 +18,33 @@ def _serialize(marker: Marker) -> dict:
         data["address"] = marker.address.model_dump()
     return data
 
+
 @router.get("/marker")
 @limiter.limit("60/minute")
-def get_markers(
-    request: Request,
-    session: Session = Depends(get_session)
-):
+def get_markers(request: Request, session: Session = Depends(get_session)):
 
-    statement = select(Marker).options(selectinload(Marker.address)).order_by(Marker.timestamp.desc())
+    statement = (
+        select(Marker)
+        .options(selectinload(Marker.address))
+        .order_by(Marker.timestamp.desc())
+    )
     markers = session.exec(statement).all()
     markers_data = [_serialize(marker) for marker in markers]
 
     return {"markers": markers_data}
 
+
 @router.get("/marker/{marker_id}")
 @limiter.limit("60/minute")
 def get_marker(
-    request: Request,
-    marker_id: int, 
-    session: Session = Depends(get_session)
+    request: Request, marker_id: int, session: Session = Depends(get_session)
 ):
     # Use selectinload to eagerly load the address relationship
-    statement = select(Marker).options(selectinload(Marker.address)).where(Marker.id == marker_id)
+    statement = (
+        select(Marker)
+        .options(selectinload(Marker.address))
+        .where(Marker.id == marker_id)
+    )
     marker = session.exec(statement).first()
 
     if not marker:
@@ -45,12 +52,13 @@ def get_marker(
 
     return {"marker": _serialize(marker)}
 
+
 @router.post("/marker")
 @limiter.limit("20/minute")
 def create_marker(
     request: Request,
-    marker: MarkerSchema, 
-    session: Session = Depends(get_session)
+    marker: MarkerSchema,
+    session: Session = Depends(get_session),
 ):
     # Create address first if provided
     address_id = None
@@ -78,20 +86,24 @@ def create_marker(
         urgency=marker.urgency,
         category=marker.category,
         status=marker.status,
-        address_id=address_id
+        address_id=address_id,
     )
     session.add(new_marker)
     session.commit()
     session.refresh(new_marker)
-    return {"message": f"Marker created successfully", "marker": _serialize(new_marker)}
+    return {
+        "message": "Marker created successfully",
+        "marker": _serialize(new_marker),
+    }
+
 
 @router.put("/marker/{marker_id}")
 @limiter.limit("20/minute")
 def update_marker(
     request: Request,
-    marker_id: int, 
-    marker: MarkerSchema, 
-    session: Session = Depends(get_session)
+    marker_id: int,
+    marker: MarkerSchema,
+    session: Session = Depends(get_session),
 ):
     existing_marker = session.get(Marker, marker_id)
     if not existing_marker:
@@ -143,6 +155,11 @@ def update_marker(
 
     # Load the updated address for response
     if existing_marker.address_id:
-        existing_marker.address = session.get(Address, existing_marker.address_id)
+        existing_marker.address = session.get(
+            Address, existing_marker.address_id
+        )
 
-    return {"message": f"Marker {marker_id} updated", "marker": _serialize(existing_marker)}
+    return {
+        "message": f"Marker {marker_id} updated",
+        "marker": _serialize(existing_marker),
+    }

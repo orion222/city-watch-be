@@ -2,13 +2,11 @@ import os
 from logging.config import fileConfig
 
 from dotenv import load_dotenv
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-from alembic import context
-
 import db.models  # noqa: F401 - populates SQLModel.metadata; without it autogenerate sees no tables and emits a migration dropping everything
+from alembic import context
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
