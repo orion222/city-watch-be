@@ -3,15 +3,18 @@ import os
 import logging
 from functools import lru_cache
 from dotenv import load_dotenv
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlmodel import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from constants import GEMINI_REPORT_CREATE_PROMPT, GEMINI_RESPONSE_SCHEMA
 from db.db import get_session
 from google import genai
 from google.genai import types
 from db.models import Marker, Address
 from utils.geocoding import geocode_address
+from utils.rate_limit import limiter
+
+THINKING_BUDGET = 1024  # Adjust this value based on your requirements, -1 for unlimited
 
 load_dotenv()
 router = APIRouter()
@@ -24,18 +27,22 @@ def get_client() -> genai.Client:
     return genai.Client(api_key=api_key)
 
 class DescriptionRequest(BaseModel):
-    description: str
+    description: str = Field(max_length=4000) # Character limit, around 800 words
 
 @router.post("/submit-report-gemini")
-def submit_report_gemini(request: DescriptionRequest, session: Session = Depends(get_session)):
+@limiter.limit("5/minute;30/hour")
+def submit_report_gemini(
+   request: Request, # Needed for limiter to capture IP address
+   body: DescriptionRequest, 
+   session: Session = Depends(get_session)
+):
   try:
-    prompt = GEMINI_REPORT_CREATE_PROMPT.replace("{{description}}", request.description)
+    prompt = GEMINI_REPORT_CREATE_PROMPT.replace("{{description}}", body.description)
     response = get_client().models.generate_content(
         model="gemini-3.5-flash-lite",
         contents=prompt,
         config=types.GenerateContentConfig(
-          # -1 thinking budget means that the model will decide how much to think on its own
-          thinking_config=types.ThinkingConfig(thinking_budget=-1),
+          thinking_config=types.ThinkingConfig(thinking_budget=THINKING_BUDGET),
           response_mime_type='application/json',
           response_schema=GEMINI_RESPONSE_SCHEMA
         ),
