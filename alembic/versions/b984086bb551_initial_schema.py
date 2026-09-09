@@ -29,12 +29,8 @@ def upgrade() -> None:
         sa.Column("street", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("city", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("state", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column(
-            "postal_code", sqlmodel.sql.sqltypes.AutoString(), nullable=True
-        ),
-        sa.Column(
-            "country", sqlmodel.sql.sqltypes.AutoString(), nullable=False
-        ),
+        sa.Column("postal_code", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+        sa.Column("country", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -48,9 +44,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("latitude", sa.Float(), nullable=False),
         sa.Column("longitude", sa.Float(), nullable=False),
-        sa.Column(
-            "description", sqlmodel.sql.sqltypes.AutoString(), nullable=False
-        ),
+        sa.Column("description", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column(
             "urgency",
@@ -104,9 +98,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        "ix_marker_lat_lng", "marker", ["latitude", "longitude"], unique=False
-    )
+    op.create_index("ix_marker_lat_lng", "marker", ["latitude", "longitude"], unique=False)
     # ### end Alembic commands ###
 
 

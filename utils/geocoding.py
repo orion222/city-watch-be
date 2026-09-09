@@ -33,10 +33,7 @@ def _fetch_geoapify_data(address: str) -> dict:
 
 def _valid_coords(lat, lon) -> bool:
     """Geoapify has returned numbers we can store as a lat/lng pair."""
-    if not all(
-        isinstance(c, (int, float)) and not isinstance(c, bool)
-        for c in (lat, lon)
-    ):
+    if not all(isinstance(c, (int, float)) and not isinstance(c, bool) for c in (lat, lon)):
         return False
     return -90 <= lat <= 90 and -180 <= lon <= 180
 
@@ -53,9 +50,7 @@ def _extract_address_details(feature: dict) -> dict:
         )
 
     if not _valid_coords(lat, lon):
-        raise HTTPException(
-            status_code=400, detail="Geocoder returned unusable coordinates."
-        )
+        raise HTTPException(status_code=400, detail="Geocoder returned unusable coordinates.")
 
     return {
         "position": [lat, lon],
@@ -81,9 +76,7 @@ def geocode_address(address: str) -> dict:
     geo_data = _fetch_geoapify_data(address)
 
     if not geo_data.get("features"):
-        raise HTTPException(
-            status_code=400, detail="Could not geocode the provided address."
-        )
+        raise HTTPException(status_code=400, detail="Could not geocode the provided address.")
 
     feature = geo_data["features"][0]["properties"]
     return _extract_address_details(feature)

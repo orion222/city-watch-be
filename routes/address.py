@@ -19,15 +19,11 @@ def get_addresses(request: Request, session: Session = Depends(get_session)):
 
 @router.get("/address/{address_id}")
 @limiter.limit("60/minute")
-def get_address(
-    request: Request, address_id: int, session: Session = Depends(get_session)
-):
+def get_address(request: Request, address_id: int, session: Session = Depends(get_session)):
     """Get a specific address by ID"""
     address = session.get(Address, address_id)
     if not address:
-        raise HTTPException(
-            status_code=404, detail=f"Address {address_id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Address {address_id} not found")
     return {"address": address}
 
 
@@ -63,9 +59,7 @@ def update_address(
     """Update an existing address"""
     existing_address = session.get(Address, address_id)
     if not existing_address:
-        raise HTTPException(
-            status_code=404, detail=f"Address {address_id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Address {address_id} not found")
 
     # Update only provided fields
     address_data = address.model_dump(exclude_unset=True)
@@ -84,15 +78,11 @@ def update_address(
 
 @router.delete("/address/{address_id}")
 @limiter.limit("20/minute")
-def delete_address(
-    request: Request, address_id: int, session: Session = Depends(get_session)
-):
+def delete_address(request: Request, address_id: int, session: Session = Depends(get_session)):
     """Delete an address"""
     address = session.get(Address, address_id)
     if not address:
-        raise HTTPException(
-            status_code=404, detail=f"Address {address_id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Address {address_id} not found")
 
     session.delete(address)
     session.commit()
