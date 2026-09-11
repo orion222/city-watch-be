@@ -102,7 +102,7 @@ class GeoapifyClient:
 
         return {"position": [lat, lon], "address_details": self._parse_address_properties(props)}
 
-    def reverse_geocode(self, lat: float, lon: float) -> dict:
+    def reverse_geocode(self, lat: float, lon: float) -> dict | None:
         """
         Converts (latitude, longitude) coordinates to an address dictionary using Geoapify.
 
