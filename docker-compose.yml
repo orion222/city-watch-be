@@ -16,5 +16,35 @@ services:
       interval: 5s
       retries: 10
 
+  minio:
+    image: minio/minio:latest
+    container_name: city_watch_minio
+    restart: always
+    ports:
+      - "9000:9000" # API port
+      - "9001:9001" # Web UI port
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+  # Set up a MinIO bucket, set public read and download permissions
+  minio-setup:
+    image: minio/mc
+    container_name: city_watch_minio_setup
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      /usr/bin/mc config host add myminio http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin};
+      /usr/bin/mc mb myminio/city-watch-reports --ignore-existing;
+      /usr/bin/mc anonymous set download myminio/city-watch-reports;
+      exit 0;
+      "
+
 volumes:
   postgres_data:
+  minio_data:
