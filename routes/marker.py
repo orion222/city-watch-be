@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
@@ -37,7 +37,7 @@ def get_marker(request: Request, marker_id: int, session: Session = Depends(get_
     marker = session.exec(statement).first()
 
     if not marker:
-        return {"message": f"Marker {marker_id} not found"}
+        raise HTTPException(status_code=404, detail=f"Marker {marker_id} not found")
 
     return {"marker": _serialize(marker)}
 
@@ -60,10 +60,11 @@ def create_marker(
             country=marker.address.country,
         )
         session.add(new_address)
-        session.commit()
-        session.refresh(new_address)
+        session.flush()
         address_id = new_address.id
     elif marker.address_id:
+        if not session.get(Address, marker.address_id):
+            raise HTTPException(status_code=404, detail=f"Address {marker.address_id} not found")
         address_id = marker.address_id
 
     # Create marker with address relationship
@@ -76,6 +77,7 @@ def create_marker(
         category=marker.category,
         status=marker.status,
         address_id=address_id,
+        image_url=marker.image_url,
     )
     session.add(new_marker)
     session.commit()
@@ -96,7 +98,7 @@ def update_marker(
 ):
     existing_marker = session.get(Marker, marker_id)
     if not existing_marker:
-        return {"message": f"Marker {marker_id} not found"}
+        raise HTTPException(status_code=404, detail=f"Marker {marker_id} not found")
 
     # Handle address update/creation
     address_id = existing_marker.address_id
@@ -121,15 +123,19 @@ def update_marker(
                 country=marker.address.country,
             )
             session.add(new_address)
-            session.commit()
-            session.refresh(new_address)
+            session.flush()
             address_id = new_address.id
     elif marker.address_id:
+        if not session.get(Address, marker.address_id):
+            raise HTTPException(status_code=404, detail=f"Address {marker.address_id} not found")
         address_id = marker.address_id
 
     # Update marker fields (excluding address object and wire-only position)
     marker_data = marker.model_dump(exclude={"address", "position"})
     marker_data["address_id"] = address_id
+
+    if marker.image_url is None:
+        marker_data["image_url"] = existing_marker.image_url
 
     for key, value in marker_data.items():
         if hasattr(existing_marker, key):
