@@ -1,9 +1,9 @@
+import logging
 from io import BytesIO
 
 import pillow_heif
 from fastapi import HTTPException
 from PIL import ExifTags, Image, ImageOps
-import logging
 
 pillow_heif.register_heif_opener()
 
@@ -39,7 +39,7 @@ def _dms_to_decimal(dms: tuple, ref: str) -> float:
     return decimal
 
 
-def _extract_gps_coordinates(img: Image) -> tuple[float | None, float | None]:
+def _extract_gps_coordinates(img: Image.Image) -> tuple[float | None, float | None]:
     """
     Extracts GPS coordinates from the EXIF data of an image.
 
@@ -73,7 +73,8 @@ def _extract_gps_coordinates(img: Image) -> tuple[float | None, float | None]:
         lat = _dms_to_decimal(lat_val, lat_ref)
         lon = _dms_to_decimal(lon_val, lon_ref)
 
-        if not (-90 <= lat <= 90) or not (-180 <= lon <= 180):
+        # Reject uninitialized sensor defaults (0.0, 0.0 / Null Island) and out-of-bounds coordinates
+        if (lat == 0.0 and lon == 0.0) or not (-90 <= lat <= 90) or not (-180 <= lon <= 180):
             logger.warning(f"Extracted GPS coordinates out of bounds: lat={lat}, lon={lon}")
             return None, None
 
