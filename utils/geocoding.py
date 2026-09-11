@@ -3,7 +3,10 @@ import os
 from functools import lru_cache
 
 import httpx
+from dotenv import load_dotenv
 from fastapi import HTTPException
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 

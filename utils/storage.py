@@ -6,7 +6,10 @@ from functools import lru_cache
 import boto3
 from botocore.client import Config
 from botocore.exceptions import BotoCoreError, ClientError
+from dotenv import load_dotenv
 from fastapi import HTTPException
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
