@@ -119,3 +119,99 @@ GEMINI_RESPONSE_SCHEMA = {
     },
     "required": ["report"],
 }
+
+GEMINI_MULTIMODAL_PROMPT = """
+You are a sophisticated AI agent designed to process real-time municipal incident reports based
+on an uploaded image and an optional text note from a citizen.
+
+Your task is to analyze the visual evidence in the image alongside the user's optional note and
+output a structured JSON report.
+
+### Detailed Instructions:
+
+1. **Validity Check (`is_valid_incident`):**
+    - First, determine whether the image clearly depicts a genuine municipal incident,
+      civic problem, hazard, or infrastructure defect (e.g., potholes, broken streetlights,
+      graffiti, illegal dumping, flooding, road obstructions, vandalized property,
+      safety threats).
+    - If the image is unrelated (e.g., a selfie, a pet, food, a meme, an empty wall,
+      completely dark/blurry, or irrelevant), you MUST set `is_valid_incident` to false.
+      You can leave the remaining fields empty.
+    - Only set `is_valid_incident` to true if a genuine civic incident is observable.
+
+2. **Factual Grounding (DO NOT INVENT DETAILS):**
+    - You must strictly describe what is visually observable in the image.
+    - Do NOT invent causes, suspect names, vehicle license plates, or specific details
+      that you cannot clearly see.
+
+3. **Field Extraction (When `is_valid_incident` is true):**
+    - **`category`**: Choose the single best fit from:
+      ["Crime", "Environment", "Infrastructure", "Safety", "Other"].
+    - **`urgency`**: Choose from: ["Low", "Medium", "High", "Critical"] based on immediate
+      danger to public safety or property.
+    - **`title`**: A concise, descriptive title of 5 words or less
+      (e.g., "Deep Pothole on Right Lane", "Fallen Tree Blocking Sidewalk").
+    - **`description`**: A clear, factual summary synthesizing what is seen in the image
+      and any context from the user's note.
+    - **`address`**: If visible street signs, storefronts, building numbers, or text in
+      the user note mention a specific location, extract it as a readable address string.
+      Otherwise, leave it as an empty string.
+
+**USER'S OPTIONAL NOTE:**
+"{{description}}"
+"""
+
+GEMINI_MULTIMODAL_RESPONSE_SCHEMA = {
+    "type": "OBJECT",
+    "properties": {
+        "report": {
+            "type": "OBJECT",
+            "properties": {
+                "is_valid_incident": {
+                    "type": "BOOLEAN",
+                    "description": (
+                        "Set to true if the image depicts a real civic or municipal issue, "
+                        "false if unrelated or ambiguous."
+                    ),
+                },
+                "category": {
+                    "type": "STRING",
+                    "description": "The category that best fits the incident depicted.",
+                    "enum": [
+                        MarkerCategory.CRIME.value,
+                        MarkerCategory.ENVIRONMENT.value,
+                        MarkerCategory.INFRASTRUCTURE.value,
+                        MarkerCategory.SAFETY.value,
+                        MarkerCategory.OTHER.value,
+                    ],
+                },
+                "address": {
+                    "type": "STRING",
+                    "description": (
+                        "Readable address or location extracted from image landmarks or user note, or empty string."
+                    ),
+                },
+                "title": {
+                    "type": "STRING",
+                    "description": "A concise title describing the situation. Max 5 words.",
+                },
+                "urgency": {
+                    "type": "STRING",
+                    "description": "Urgency level of the report.",
+                    "enum": [
+                        MarkerUrgency.LOW.value,
+                        MarkerUrgency.MEDIUM.value,
+                        MarkerUrgency.HIGH.value,
+                        MarkerUrgency.CRITICAL.value,
+                    ],
+                },
+                "description": {
+                    "type": "STRING",
+                    "description": "Factual description of the incident based on visual evidence and user note.",
+                },
+            },
+            "required": ["is_valid_incident"],
+        }
+    },
+    "required": ["report"],
+}
