@@ -4,22 +4,38 @@ import os
 import urllib.parse
 import urllib.request
 
-from fastapi import HTTPException
+from fastapi import HTTPException, logger
+
+GEOAPIFY_BASE_URL = "https://api.geoapify.com/v1/geocode"
+REQUEST_TIMEOUT_SECONDS = 10
 
 
-def _fetch_geoapify_data(address: str) -> dict:
-    """Handles the external API request to Geoapify."""
+def _fetch_geoapify_data(endpoint: str, params: dict) -> dict:
+    """
+    Generic HTTP transport for Geoapify API requests.
+
+    Args:
+        endpoint (str): The API sub-path (e.g. 'search' or 'reverse').
+        params (dict): Query parameters to encode.
+
+    Returns:
+        dict: Parsed JSON response from Geoapify.
+    """
+
     api_key = os.getenv("GEOAPIFY_API_KEY")
     if not api_key:
+        logger.error("Geoapify API key is not configured.")
         raise HTTPException(
             status_code=500,
-            detail="Geoapify API key is not set in environment variables.",
+            detail="Service unavailable",
         )
 
-    encoded_address = urllib.parse.quote(address)
-    url = f"https://api.geoapify.com/v1/geocode/search?text={encoded_address}&apiKey={api_key}"
+    query_params = {**params, "apiKey": api_key}
 
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    encoded_query = urllib.parse.urlencode(query_params)
+    url = f"{GEOAPIFY_BASE_URL}/{endpoint}?{encoded_query}"
+
+    req = urllib.request.Request(url, headers={"User-Agent": "CityWatch/1.0"})
     try:
         with urllib.request.urlopen(req, timeout=10) as response:
             return json.loads(response.read().decode())
@@ -64,19 +80,80 @@ def _extract_address_details(feature: dict) -> dict:
     }
 
 
+def _parse_address_properties(properties: dict) -> dict:
+    """
+    Extracts address fields from Geoapify feature's properties.
+
+    Args:
+        properties (dict): The properties dictionary from a Geoapify feature.
+
+    Returns:
+        dict: A dictionary containing the extracted address fields.
+    """
+
+    return {
+        "street": properties.get("street", ""),
+        "city": properties.get("city", ""),
+        "state": properties.get("state", ""),
+        "postal_code": properties.get("postcode", ""),
+        "country": properties.get("country", ""),
+    }
+
+
 def geocode_address(address: str) -> dict:
     """
-    Orchestrates the geocoding process:
-    1. Fetches data from Geoapify
-    2. Parses and formats the response
+    Forward geocodes an address string to coordinates and structured address details.
+
+    Returns:
+        dict: {
+            "position": [lat, lon],
+            "address_details": {"street": ..., "city": ..., "state": ..., "postal_code": ..., "country": ...}
+        }
     """
-    if not address:
+
+    if not address or not address.strip():
         raise HTTPException(status_code=400, detail="Address string is empty.")
 
-    geo_data = _fetch_geoapify_data(address)
+    geo_data = _fetch_geoapify_data("search", {"text": address.strip()})
+    features = geo_data.get("features", [])
 
-    if not geo_data.get("features"):
+    if not features:
         raise HTTPException(status_code=400, detail="Could not geocode the provided address.")
 
-    feature = geo_data["features"][0]["properties"]
-    return _extract_address_details(feature)
+    props = features[0].get("properties", {})
+    lat = props.get("lat")
+    lon = props.get("lon")
+
+    if not _valid_coords(lat, lon):
+        raise HTTPException(status_code=400, detail="Geocoder returned unusable coordinates.")
+
+    return {"position": [lat, lon], "address_details": _extract_address_details(features[0])}
+
+
+def reverse_geocode(lat: float, lon: float) -> dict:
+    """
+    Converts (latitude, longitude) coordinates to an address dictionary using Geoapify.
+
+    Args:
+        lat (float): Latitude of the location.
+        lon (float): Longitude of the location.
+
+    Returns:
+        dict: Parsed address dictionary, or None if no address is found or service is unavailable.
+    """
+    if not _valid_coords(lat, lon):
+        logger.warning(f"Invalid coordinates passed to reverse_geocode: lat={lat}, lon={lon}")
+        return None
+
+    try:
+        geo_data = _fetch_geoapify_data("reverse", {"lat": lat, "lon": lon})
+        features = geo_data.get("features", [])
+        if not features:
+            logger.info(f"No address found for coordinates: lat={lat}, lon={lon}")
+            return None
+
+        props = features[0].get("properties", {})
+        return _parse_address_properties(props)
+    except Exception as e:
+        logger.warning(f"Reverse geocoding failed for ({lat}, {lon}): {e}")
+        return None
