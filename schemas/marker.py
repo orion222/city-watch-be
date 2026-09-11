@@ -15,6 +15,7 @@ class Marker(BaseModel):
     status: MarkerStatus = MarkerStatus.PENDING  # Default value
     address_id: Optional[int] = None  # Optional foreign key to address
     address: Optional[AddressCreate] = None  # Nested address object
+    image_url: Optional[str] = None  # Optional image URL
 
     @field_validator("position")
     @classmethod

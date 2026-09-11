@@ -71,4 +71,6 @@ class Marker(SQLModel, table=True):
     address_id: int | None = Field(default=None, foreign_key="address.id")
     address: Address | None = Relationship(back_populates="markers")
 
+    image_url: str | None = Field(default=None, sa_column=sa.Column(sa.String(2048), nullable=True))
+
     __table_args__ = (sa.Index("ix_marker_lat_lng", "latitude", "longitude"),)
