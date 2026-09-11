@@ -155,7 +155,6 @@ def submit_report_gemini_multimodal(
             detail=f"Unsupported file type '{image.content_type}'. Allowed types: {', '.join(ALLOWED_MIME_TYPES)}",
         )
 
-    # Read and enforce file size (< 5MB)
     file_bytes = image.file.read(MAX_FILE_SIZE + 1)  # Read up to 5MB + 1 byte to check size
     if len(file_bytes) > MAX_FILE_SIZE:
         raise HTTPException(
