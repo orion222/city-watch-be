@@ -3,15 +3,15 @@ from io import BytesIO
 import pillow_heif
 from fastapi import HTTPException
 from PIL import ExifTags, Image, ImageOps
-from uvicorn import logging
+import logging
 
 pillow_heif.register_heif_opener()
 
 logger = logging.getLogger(__name__)
 
-MAX_DIM = 2048  # Maximum dimension for resizing images
+MAX_DIM = 1280  # Maximum dimension for resizing images
 JPEG_QUALITY = 85
-ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/heic", "image/heif"]
+ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"]
 
 
 def _dms_to_decimal(dms: tuple, ref: str) -> float:
@@ -32,7 +32,8 @@ def _dms_to_decimal(dms: tuple, ref: str) -> float:
     decimal = degrees + (minutes / 60.0) + (seconds / 3600.0)
 
     # Negate directions
-    if ref in ["S", "W"]:
+    ref_str = ref.decode("ascii", errors="ignore").upper() if isinstance(ref, bytes) else str(ref).upper()
+    if ref_str in ["S", "W"]:
         return -decimal
 
     return decimal
@@ -100,24 +101,26 @@ def process_image(file_bytes: bytes) -> tuple[bytes, str, float | None, float | 
     """
 
     # Verify
+    buffer = BytesIO(file_bytes)
     try:
-        test_img = Image.open(BytesIO(file_bytes))
+        test_img = Image.open(buffer)
         test_img.verify()
     except Exception as e:
         logger.error(f"Image verification failed: {e}")
         raise HTTPException(status_code=400, detail="Invalid image file")
 
-    img = Image.open(BytesIO(file_bytes))
+    buffer.seek(0)  # Reset buffer position
+    img = Image.open(buffer)
     lat, lon = _extract_gps_coordinates(img)
     img = ImageOps.exif_transpose(img)  # Rotate based on EXIF orientation
-    img.thumbnail((MAX_DIM, MAX_DIM), Image.Resampling.LANCZOS)  # Resize while preserving aspect ratio
+    img.thumbnail((MAX_DIM, MAX_DIM), Image.Resampling.BILINEAR)  # Resize while preserving aspect ratio
 
     # Normalize if image was RGBA/HEIF
     if img.mode != "RGB":
         img = img.convert("RGB")
 
     output_buffer = BytesIO()
-    img.save(output_buffer, format="JPEG", quality=JPEG_QUALITY, optimize=True)
+    img.save(output_buffer, format="JPEG", quality=JPEG_QUALITY)
     clean_bytes = output_buffer.getvalue()
 
     return clean_bytes, "image/jpeg", lat, lon
