@@ -5,7 +5,7 @@ from functools import lru_cache
 
 import boto3
 from botocore.client import Config
-from botocore.exceptions import ClientError
+from botocore.exceptions import BotoCoreError, ClientError
 from fastapi import HTTPException
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ def upload_image_to_s3(file_bytes: bytes, content_type: str = "image/jpeg") -> s
     public_url_base = os.getenv("AWS_PUBLIC_URL_BASE")
 
     prefix = DIRECTORY.strip("/")
-    unique_key = f"{prefix}/{uuid.uuid4().hex}.jpg"
+    unique_key = f"{prefix}/{uuid.uuid4().hex}.jpg" if prefix else f"{uuid.uuid4().hex}.jpg"
     client = get_s3_client()
 
     # 3. Send the file over the network to MinIO
@@ -66,7 +66,7 @@ def upload_image_to_s3(file_bytes: bytes, content_type: str = "image/jpeg") -> s
             Body=file_bytes,
             ContentType=content_type,
         )
-    except ClientError as e:
+    except (ClientError, BotoCoreError) as e:
         logger.error(f"S3 upload failed for key {unique_key}: {e}")
         raise HTTPException(
             status_code=502,
