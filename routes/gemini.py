@@ -13,7 +13,7 @@ from sqlmodel import Session
 from constants import GEMINI_REPORT_CREATE_PROMPT, GEMINI_RESPONSE_SCHEMA
 from db.db import get_session
 from db.models import Address, Marker
-from utils.geocoding import geocode_address
+from utils.geocoding import get_geocoding_client
 from utils.rate_limit import limiter
 
 THINKING_BUDGET = 1024  # Adjust this value based on your requirements, -1 for unlimited
@@ -40,6 +40,7 @@ def submit_report_gemini(
     request: Request,  # Needed for limiter to capture IP address
     body: DescriptionRequest,
     session: Session = Depends(get_session),
+    geo_client=Depends(get_geocoding_client),
 ):
     try:
         prompt = GEMINI_REPORT_CREATE_PROMPT.replace("{{description}}", body.description)
@@ -72,7 +73,7 @@ def submit_report_gemini(
         if not address:
             raise HTTPException(status_code=400, detail="No address provided for geocoding.")
 
-        geo_result = geocode_address(address)
+        geo_result = geo_client.geocode(address)
         address_details = geo_result["address_details"]
         position = geo_result["position"]
 
