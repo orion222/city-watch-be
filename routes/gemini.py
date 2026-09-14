@@ -21,6 +21,7 @@ from db.models import Address, Marker
 from utils.geocoding import GeoapifyClient, get_geocoding_client
 from utils.image_processing import ALLOWED_MIME_TYPES, process_image
 from utils.rate_limit import limiter
+from utils.security import sanitize_text
 from utils.storage import upload_image_to_s3
 
 logger = logging.getLogger(__name__)
@@ -53,11 +54,11 @@ def _raise_structured_422(
 ):
     rep = report or {}
     extracted = {
-        "description": rep.get("description") or "",
+        "description": sanitize_text(rep.get("description")),
         "urgency": rep.get("urgency") or "",
-        "title": rep.get("title") or "",
+        "title": sanitize_text(rep.get("title")),
         "category": rep.get("category") or "",
-        "address": address_override if address_override is not None else (rep.get("address") or ""),
+        "address": sanitize_text(address_override if address_override is not None else rep.get("address")),
     }
     raise HTTPException(
         status_code=422,
@@ -78,11 +79,12 @@ def submit_report_gemini(
     geo_client=Depends(get_geocoding_client),
 ):
     try:
-        prompt = GEMINI_REPORT_CREATE_PROMPT.replace("{{description}}", body.description)
+        user_content = f"<citizen_note>\n{body.description.strip()}\n</citizen_note>"
         response = get_client().models.generate_content(
             model=GEMINI_MODEL,
-            contents=prompt,
+            contents=user_content,
             config=types.GenerateContentConfig(
+                system_instruction=GEMINI_REPORT_CREATE_PROMPT,
                 thinking_config=types.ThinkingConfig(thinking_budget=THINKING_BUDGET),
                 response_mime_type="application/json",
                 response_schema=GEMINI_RESPONSE_SCHEMA,
@@ -132,11 +134,11 @@ def submit_report_gemini(
         position = geo_result["position"]
 
         new_address = Address(
-            street=address_details["street"],
-            city=address_details["city"],
-            state=address_details["state"],
-            postal_code=address_details["postal_code"],
-            country=address_details["country"],
+            street=sanitize_text(address_details["street"]),
+            city=sanitize_text(address_details["city"]),
+            state=sanitize_text(address_details["state"]),
+            postal_code=sanitize_text(address_details["postal_code"]) or None,
+            country=sanitize_text(address_details["country"]),
         )
         session.add(new_address)
         session.flush()
@@ -144,8 +146,8 @@ def submit_report_gemini(
         new_marker = Marker(
             latitude=position[0],
             longitude=position[1],
-            description=report["description"],
-            title=report["title"],
+            description=sanitize_text(report["description"]),
+            title=sanitize_text(report["title"]),
             urgency=report["urgency"],
             category=report["category"],
             address_id=new_address.id,
@@ -210,13 +212,15 @@ def submit_report_gemini_multimodal(
 
     try:
         user_note = description.strip() if description else "None provided."
-        prompt_text = GEMINI_MULTIMODAL_PROMPT.replace("{{description}}", user_note)
+        user_content = f"<citizen_note>\n{user_note}\n</citizen_note>"
         image_part = types.Part.from_bytes(data=clean_bytes, mime_type=output_mime)
 
         response = get_client().models.generate_content(
             model=GEMINI_MODEL,
-            contents=[image_part, prompt_text],
+            contents=[image_part, user_content],
             config=types.GenerateContentConfig(
+                system_instruction=GEMINI_MULTIMODAL_PROMPT,
+                thinking_config=types.ThinkingConfig(thinking_budget=THINKING_BUDGET),
                 response_mime_type="application/json",
                 response_schema=GEMINI_MULTIMODAL_RESPONSE_SCHEMA,
             ),
@@ -269,11 +273,11 @@ def submit_report_gemini_multimodal(
             rev_addr = geo_client.reverse_geocode(exif_lat, exif_lon)
             if rev_addr and any(rev_addr.values()):
                 new_address = Address(
-                    street=rev_addr.get("street") or "Unknown Street",
-                    city=rev_addr.get("city") or "Unknown City",
-                    state=rev_addr.get("state") or "",
-                    postal_code=rev_addr.get("postal_code") or None,
-                    country=rev_addr.get("country") or "",
+                    street=sanitize_text(rev_addr.get("street")) or "Unknown Street",
+                    city=sanitize_text(rev_addr.get("city")) or "Unknown City",
+                    state=sanitize_text(rev_addr.get("state")),
+                    postal_code=sanitize_text(rev_addr.get("postal_code")) or None,
+                    country=sanitize_text(rev_addr.get("country")),
                 )
                 session.add(new_address)
                 session.flush()
@@ -309,11 +313,11 @@ def submit_report_gemini_multimodal(
         marker_lat, marker_lon = geo_result["position"]
 
         new_address = Address(
-            street=address_details.get("street") or "Unknown Street",
-            city=address_details.get("city") or "Unknown City",
-            state=address_details.get("state") or "",
-            postal_code=address_details.get("postal_code") or None,
-            country=address_details.get("country") or "",
+            street=sanitize_text(address_details.get("street")) or "Unknown Street",
+            city=sanitize_text(address_details.get("city")) or "Unknown City",
+            state=sanitize_text(address_details.get("state")),
+            postal_code=sanitize_text(address_details.get("postal_code")) or None,
+            country=sanitize_text(address_details.get("country")),
         )
         session.add(new_address)
         session.flush()
@@ -325,8 +329,8 @@ def submit_report_gemini_multimodal(
     new_marker = Marker(
         latitude=marker_lat,
         longitude=marker_lon,
-        description=report["description"],
-        title=report["title"],
+        description=sanitize_text(report["description"]),
+        title=sanitize_text(report["title"]),
         urgency=report["urgency"],
         category=report["category"],
         address_id=address_id,
