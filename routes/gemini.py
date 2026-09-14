@@ -45,6 +45,30 @@ class DescriptionRequest(BaseModel):
     description: str = Field(max_length=4000)  # Character limit, around 800 words
 
 
+def _raise_structured_422(
+    message: str,
+    report: dict | None = None,
+    missing_fields: list[str] | None = None,
+    address_override: str | None = None,
+):
+    rep = report or {}
+    extracted = {
+        "description": rep.get("description") or "",
+        "urgency": rep.get("urgency") or "",
+        "title": rep.get("title") or "",
+        "category": rep.get("category") or "",
+        "address": address_override if address_override is not None else (rep.get("address") or ""),
+    }
+    raise HTTPException(
+        status_code=422,
+        detail={
+            "message": message,
+            "missing_fields": missing_fields or [],
+            "extracted_data": extracted,
+        },
+    )
+
+
 @router.post("/submit-report-gemini")
 @limiter.limit("5/minute;30/hour")
 def submit_report_gemini(
@@ -77,14 +101,33 @@ def submit_report_gemini(
                 errors.append(field)
 
         if errors:
-            raise HTTPException(status_code=422, detail=error_msg + ", ".join(errors))
+            _raise_structured_422(
+                error_msg + ", ".join(errors),
+                report=report,
+                missing_fields=errors,
+            )
 
         # Geocode the address using Geoapify
-        address = report["address"]
+        address = report.get("address")
         if not address:
-            raise HTTPException(status_code=400, detail="No address provided for geocoding.")
+            _raise_structured_422(
+                "No address provided for geocoding. Please specify an address.",
+                report=report,
+                missing_fields=["address"],
+                address_override="",
+            )
 
-        geo_result = geo_client.geocode(address)
+        try:
+            geo_result = geo_client.geocode(address)
+        except HTTPException as e:
+            if e.status_code in (400, 502):
+                _raise_structured_422(
+                    f"Could not geocode the address '{address}'. Please choose an address from the search bar.",
+                    report=report,
+                    missing_fields=["address"],
+                    address_override=address,
+                )
+            raise
         address_details = geo_result["address_details"]
         position = geo_result["position"]
 
@@ -202,12 +245,16 @@ def submit_report_gemini_multimodal(
         )
 
     # Validate mandatory fields
+    missing_fields = []
     for field in ["title", "category", "urgency", "description"]:
         if not report.get(field):
-            raise HTTPException(
-                status_code=422,
-                detail=f"AI could not determine '{field}' from the photo. Please provide more context in the note.",
-            )
+            missing_fields.append(field)
+    if missing_fields:
+        _raise_structured_422(
+            f"AI could not determine '{', '.join(missing_fields)}' from the photo. Please provide more context.",
+            report=report,
+            missing_fields=missing_fields,
+        )
 
     # 8. Geolocation resolution hierarchy
     marker_lat: float
@@ -218,31 +265,46 @@ def submit_report_gemini_multimodal(
     if exif_lat is not None and exif_lon is not None:
         # Priority 1: Hardware EXIF GPS coordinates
         marker_lat, marker_lon = exif_lat, exif_lon
-        rev_addr = geo_client.reverse_geocode(exif_lat, exif_lon)
-        if rev_addr and any(rev_addr.values()):
-            new_address = Address(
-                street=rev_addr.get("street") or "Unknown Street",
-                city=rev_addr.get("city") or "Unknown City",
-                state=rev_addr.get("state") or "",
-                postal_code=rev_addr.get("postal_code") or None,
-                country=rev_addr.get("country") or "",
-            )
-            session.add(new_address)
-            session.flush()
-            address_id = new_address.id
+        try:
+            rev_addr = geo_client.reverse_geocode(exif_lat, exif_lon)
+            if rev_addr and any(rev_addr.values()):
+                new_address = Address(
+                    street=rev_addr.get("street") or "Unknown Street",
+                    city=rev_addr.get("city") or "Unknown City",
+                    state=rev_addr.get("state") or "",
+                    postal_code=rev_addr.get("postal_code") or None,
+                    country=rev_addr.get("country") or "",
+                )
+                session.add(new_address)
+                session.flush()
+                address_id = new_address.id
+        except Exception as e:
+            logger.warning(f"Reverse geocoding failed for EXIF coordinates ({exif_lat}, {exif_lon}): {e}")
     else:
         # Priority 2: Inferred address from Gemini
         extracted_address = report.get("address")
         if not extracted_address:
-            raise HTTPException(
-                status_code=422,
-                detail=(
-                    "No EXIF GPS coordinates were found in the photo, and no location could be identified. "
-                    "Please specify the address in the note."
-                ),
+            _raise_structured_422(
+                "No EXIF GPS coordinates were found in the photo, and no location could be identified. "
+                "Please specify the address in the location field.",
+                report=report,
+                missing_fields=["location"],
+                address_override="",
             )
 
-        geo_result = geo_client.geocode(extracted_address)
+        try:
+            geo_result = geo_client.geocode(extracted_address)
+        except HTTPException as e:
+            if e.status_code in (400, 502):
+                _raise_structured_422(
+                    f"AI identified location '{extracted_address}', but it could not be geocoded. "
+                    "Please select a recognized address from the search bar.",
+                    report=report,
+                    missing_fields=["location"],
+                    address_override=extracted_address,
+                )
+            raise
+
         address_details = geo_result["address_details"]
         marker_lat, marker_lon = geo_result["position"]
 
