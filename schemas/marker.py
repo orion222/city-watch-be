@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from db.enums import MarkerCategory, MarkerStatus, MarkerUrgency
 from schemas.address import AddressCreate
+from utils.security import validate_url_protocol
 
 
 class Marker(BaseModel):
@@ -16,6 +17,13 @@ class Marker(BaseModel):
     address_id: Optional[int] = None  # Optional foreign key to address
     address: Optional[AddressCreate] = None  # Nested address object
     image_url: Optional[str] = None  # Optional image URL
+
+    @field_validator("image_url")
+    @classmethod
+    def _valid_image_url(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and not validate_url_protocol(v):
+            raise ValueError("image_url must use safe http or https protocols")
+        return v
 
     @field_validator("position")
     @classmethod

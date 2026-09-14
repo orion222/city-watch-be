@@ -21,6 +21,7 @@ from db.models import Address, Marker
 from utils.geocoding import GeoapifyClient, get_geocoding_client
 from utils.image_processing import ALLOWED_MIME_TYPES, process_image
 from utils.rate_limit import limiter
+from utils.security import sanitize_text
 from utils.storage import upload_image_to_s3
 
 logger = logging.getLogger(__name__)
@@ -45,6 +46,30 @@ class DescriptionRequest(BaseModel):
     description: str = Field(max_length=4000)  # Character limit, around 800 words
 
 
+def _raise_structured_422(
+    message: str,
+    report: dict | None = None,
+    missing_fields: list[str] | None = None,
+    address_override: str | None = None,
+):
+    rep = report or {}
+    extracted = {
+        "description": sanitize_text(rep.get("description")),
+        "urgency": rep.get("urgency") or "",
+        "title": sanitize_text(rep.get("title")),
+        "category": rep.get("category") or "",
+        "address": sanitize_text(address_override if address_override is not None else rep.get("address")),
+    }
+    raise HTTPException(
+        status_code=422,
+        detail={
+            "message": message,
+            "missing_fields": missing_fields or [],
+            "extracted_data": extracted,
+        },
+    )
+
+
 @router.post("/submit-report-gemini")
 @limiter.limit("5/minute;30/hour")
 def submit_report_gemini(
@@ -54,11 +79,12 @@ def submit_report_gemini(
     geo_client=Depends(get_geocoding_client),
 ):
     try:
-        prompt = GEMINI_REPORT_CREATE_PROMPT.replace("{{description}}", body.description)
+        user_content = f"<citizen_note>\n{body.description.strip()}\n</citizen_note>"
         response = get_client().models.generate_content(
             model=GEMINI_MODEL,
-            contents=prompt,
+            contents=user_content,
             config=types.GenerateContentConfig(
+                system_instruction=GEMINI_REPORT_CREATE_PROMPT,
                 thinking_config=types.ThinkingConfig(thinking_budget=THINKING_BUDGET),
                 response_mime_type="application/json",
                 response_schema=GEMINI_RESPONSE_SCHEMA,
@@ -77,23 +103,42 @@ def submit_report_gemini(
                 errors.append(field)
 
         if errors:
-            raise HTTPException(status_code=422, detail=error_msg + ", ".join(errors))
+            _raise_structured_422(
+                error_msg + ", ".join(errors),
+                report=report,
+                missing_fields=errors,
+            )
 
         # Geocode the address using Geoapify
-        address = report["address"]
+        address = report.get("address")
         if not address:
-            raise HTTPException(status_code=400, detail="No address provided for geocoding.")
+            _raise_structured_422(
+                "No address provided for geocoding. Please specify an address.",
+                report=report,
+                missing_fields=["address"],
+                address_override="",
+            )
 
-        geo_result = geo_client.geocode(address)
+        try:
+            geo_result = geo_client.geocode(address)
+        except HTTPException as e:
+            if e.status_code in (400, 502):
+                _raise_structured_422(
+                    f"Could not geocode the address '{address}'. Please choose an address from the search bar.",
+                    report=report,
+                    missing_fields=["address"],
+                    address_override=address,
+                )
+            raise
         address_details = geo_result["address_details"]
         position = geo_result["position"]
 
         new_address = Address(
-            street=address_details["street"],
-            city=address_details["city"],
-            state=address_details["state"],
-            postal_code=address_details["postal_code"],
-            country=address_details["country"],
+            street=sanitize_text(address_details["street"]),
+            city=sanitize_text(address_details["city"]),
+            state=sanitize_text(address_details["state"]),
+            postal_code=sanitize_text(address_details["postal_code"]) or None,
+            country=sanitize_text(address_details["country"]),
         )
         session.add(new_address)
         session.flush()
@@ -101,8 +146,8 @@ def submit_report_gemini(
         new_marker = Marker(
             latitude=position[0],
             longitude=position[1],
-            description=report["description"],
-            title=report["title"],
+            description=sanitize_text(report["description"]),
+            title=sanitize_text(report["title"]),
             urgency=report["urgency"],
             category=report["category"],
             address_id=new_address.id,
@@ -167,13 +212,15 @@ def submit_report_gemini_multimodal(
 
     try:
         user_note = description.strip() if description else "None provided."
-        prompt_text = GEMINI_MULTIMODAL_PROMPT.replace("{{description}}", user_note)
+        user_content = f"<citizen_note>\n{user_note}\n</citizen_note>"
         image_part = types.Part.from_bytes(data=clean_bytes, mime_type=output_mime)
 
         response = get_client().models.generate_content(
             model=GEMINI_MODEL,
-            contents=[image_part, prompt_text],
+            contents=[image_part, user_content],
             config=types.GenerateContentConfig(
+                system_instruction=GEMINI_MULTIMODAL_PROMPT,
+                thinking_config=types.ThinkingConfig(thinking_budget=THINKING_BUDGET),
                 response_mime_type="application/json",
                 response_schema=GEMINI_MULTIMODAL_RESPONSE_SCHEMA,
             ),
@@ -202,12 +249,16 @@ def submit_report_gemini_multimodal(
         )
 
     # Validate mandatory fields
+    missing_fields = []
     for field in ["title", "category", "urgency", "description"]:
         if not report.get(field):
-            raise HTTPException(
-                status_code=422,
-                detail=f"AI could not determine '{field}' from the photo. Please provide more context in the note.",
-            )
+            missing_fields.append(field)
+    if missing_fields:
+        _raise_structured_422(
+            f"AI could not determine '{', '.join(missing_fields)}' from the photo. Please provide more context.",
+            report=report,
+            missing_fields=missing_fields,
+        )
 
     # 8. Geolocation resolution hierarchy
     marker_lat: float
@@ -218,40 +269,55 @@ def submit_report_gemini_multimodal(
     if exif_lat is not None and exif_lon is not None:
         # Priority 1: Hardware EXIF GPS coordinates
         marker_lat, marker_lon = exif_lat, exif_lon
-        rev_addr = geo_client.reverse_geocode(exif_lat, exif_lon)
-        if rev_addr and any(rev_addr.values()):
-            new_address = Address(
-                street=rev_addr.get("street") or "Unknown Street",
-                city=rev_addr.get("city") or "Unknown City",
-                state=rev_addr.get("state") or "",
-                postal_code=rev_addr.get("postal_code") or None,
-                country=rev_addr.get("country") or "",
-            )
-            session.add(new_address)
-            session.flush()
-            address_id = new_address.id
+        try:
+            rev_addr = geo_client.reverse_geocode(exif_lat, exif_lon)
+            if rev_addr and any(rev_addr.values()):
+                new_address = Address(
+                    street=sanitize_text(rev_addr.get("street")) or "Unknown Street",
+                    city=sanitize_text(rev_addr.get("city")) or "Unknown City",
+                    state=sanitize_text(rev_addr.get("state")),
+                    postal_code=sanitize_text(rev_addr.get("postal_code")) or None,
+                    country=sanitize_text(rev_addr.get("country")),
+                )
+                session.add(new_address)
+                session.flush()
+                address_id = new_address.id
+        except Exception as e:
+            logger.warning(f"Reverse geocoding failed for EXIF coordinates ({exif_lat}, {exif_lon}): {e}")
     else:
         # Priority 2: Inferred address from Gemini
         extracted_address = report.get("address")
         if not extracted_address:
-            raise HTTPException(
-                status_code=422,
-                detail=(
-                    "No EXIF GPS coordinates were found in the photo, and no location could be identified. "
-                    "Please specify the address in the note."
-                ),
+            _raise_structured_422(
+                "No EXIF GPS coordinates were found in the photo, and no location could be identified. "
+                "Please specify the address in the location field.",
+                report=report,
+                missing_fields=["location"],
+                address_override="",
             )
 
-        geo_result = geo_client.geocode(extracted_address)
+        try:
+            geo_result = geo_client.geocode(extracted_address)
+        except HTTPException as e:
+            if e.status_code in (400, 502):
+                _raise_structured_422(
+                    f"AI identified location '{extracted_address}', but it could not be geocoded. "
+                    "Please select a recognized address from the search bar.",
+                    report=report,
+                    missing_fields=["location"],
+                    address_override=extracted_address,
+                )
+            raise
+
         address_details = geo_result["address_details"]
         marker_lat, marker_lon = geo_result["position"]
 
         new_address = Address(
-            street=address_details.get("street") or "Unknown Street",
-            city=address_details.get("city") or "Unknown City",
-            state=address_details.get("state") or "",
-            postal_code=address_details.get("postal_code") or None,
-            country=address_details.get("country") or "",
+            street=sanitize_text(address_details.get("street")) or "Unknown Street",
+            city=sanitize_text(address_details.get("city")) or "Unknown City",
+            state=sanitize_text(address_details.get("state")),
+            postal_code=sanitize_text(address_details.get("postal_code")) or None,
+            country=sanitize_text(address_details.get("country")),
         )
         session.add(new_address)
         session.flush()
@@ -263,8 +329,8 @@ def submit_report_gemini_multimodal(
     new_marker = Marker(
         latitude=marker_lat,
         longitude=marker_lon,
-        description=report["description"],
-        title=report["title"],
+        description=sanitize_text(report["description"]),
+        title=sanitize_text(report["title"]),
         urgency=report["urgency"],
         category=report["category"],
         address_id=address_id,
