@@ -1,6 +1,6 @@
 from db.enums import MarkerCategory, MarkerUrgency
-
-GEMINI_REPORT_CREATE_PROMPT = """
+from datetime import datetime,UTC
+GEMINI_REPORT_CREATE_PROMPT = f"""
 You are a sophisticated AI agent designed to process real-time incident reports.
 Your primary function is to analyze a user's description of a situation,
 extract key information, and structure it into a precise JSON object that
@@ -8,7 +8,7 @@ adheres strictly to the provided schema.
 **THIS MUST BE IN THE CONTEXT OF THE USER'S REPORT. DO NOT MAKE UP ANY INFORMATION.**
 
 **Contextual Information:**
-* **Current Date & Time:** Saturday, October 4, 2025, 7:23 PM EDT
+* **Current Date & Time:**  {datetime.now(UTC)}
 * **Default Location:** Toronto, Ontario, Canada (Use this to help resolve
   ambiguous locations if no other city is specified).
 
